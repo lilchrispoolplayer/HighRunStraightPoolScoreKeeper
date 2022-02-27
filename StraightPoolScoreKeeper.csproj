@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="RackStatistics.cs" />
+    <Compile Include="ScoreModel.cs" />
     <Compile Include="StatisticsModel.cs" />
     <Compile Include="StraightPoolScoreKeeperUi.cs">
       <SubType>Form</SubType>

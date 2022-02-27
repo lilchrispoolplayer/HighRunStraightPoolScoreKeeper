@@ -25,7 +25,7 @@ namespace StraightPoolScoreKeeper
         private int totalPossibleBalls;
         private int average;
 
-        private List<int> currentScores = new List<int>();
+        private List<ScoreModel> currentScores = new List<ScoreModel>();
         private List<RackStatistics> rackStatistics = new List<RackStatistics>();
         
         /// <summary>
@@ -109,9 +109,9 @@ namespace StraightPoolScoreKeeper
         /// Returns current scores as an array
         /// </summary>
         /// <returns>Array of current scores</returns>
-        public int[] GetCurrentScores()
+        public List<ScoreModel> GetCurrentScores()
         {
-            return currentScores.ToArray();
+            return currentScores;
         }
 
         /// <summary>
@@ -148,16 +148,16 @@ namespace StraightPoolScoreKeeper
         {
             if (!deleting)
             {
-                currentScores.Add(currentScore);
+                currentScores.Add(new ScoreModel { Score = currentScore });
             }
 
             CalculateRackStatistics();
             SaveAverage();
 
-            totalBalls = currentScores.Sum();
+            totalBalls = currentScores.Sum(sm => sm.Score);
             totalRacks = 0;
-            currentScores.ForEach(currentScore => {
-                totalRacks += currentScore / 14 + 1;
+            currentScores.ForEach(sm => {
+                totalRacks += sm.Score / 14 + 1;
             });
             totalPossibleBalls = totalRacks * 14;
             totalAttempts = currentScores.Count;
@@ -169,7 +169,7 @@ namespace StraightPoolScoreKeeper
         /// <param name="scoreIndex">Index location of the score to delete</param>
         public void DeleteCurrentScore(int scoreIndex)
         {
-            int score = currentScores[scoreIndex];
+            int score = currentScores[scoreIndex].Score;
             currentScores.RemoveAt(scoreIndex);
         }
 
@@ -208,7 +208,7 @@ namespace StraightPoolScoreKeeper
                 return;
             }
 
-            average = currentScores.Sum() / currentScores.Count;
+            average = currentScores.Sum(sm => sm.Score) / currentScores.Count;
             SaveField(average, AVERAGE_TXT);
         }
 
@@ -218,9 +218,9 @@ namespace StraightPoolScoreKeeper
         private void CalculateRackStatistics()
         {
             rackStatistics.Clear();
-            currentScores.ForEach(score =>
+            currentScores.ForEach(sm =>
             {
-                int rackNumber = score / 14 + 1;
+                int rackNumber = sm.Score / 14 + 1;
                 IEnumerable<RackStatistics> rackStatistic = rackStatistics.Where(rack => rack.RackNumber == rackNumber);
                 if (rackStatistic.Count() == 0)
                 {
@@ -229,14 +229,14 @@ namespace StraightPoolScoreKeeper
                         RackNumber = rackNumber
                     };
                     rackStat.RackCount++;
-                    rackStat.AddRackScore(score);
+                    rackStat.AddRackScore(sm.Score);
                     rackStatistics.Add(rackStat);
                 } 
                 else
                 {
                     RackStatistics rackStat = rackStatistic.First();
                     rackStat.RackCount++;
-                    rackStat.AddRackScore(score);
+                    rackStat.AddRackScore(sm.Score);
                 }
             });
         }

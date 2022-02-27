@@ -35,7 +35,11 @@
             this.gbxCurrentBest = new System.Windows.Forms.GroupBox();
             this.txtCurrentBest = new System.Windows.Forms.TextBox();
             this.gbxStatistics = new System.Windows.Forms.GroupBox();
+            this.dgCurrentScores = new System.Windows.Forms.DataGridView();
             this.dgRackStatistics = new System.Windows.Forms.DataGridView();
+            this.colRackNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colRackCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colRackScores = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.lblAverage = new System.Windows.Forms.Label();
             this.txtTotalBalls = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -44,18 +48,16 @@
             this.txtTotalAttempts = new System.Windows.Forms.TextBox();
             this.lblTotalAttemps = new System.Windows.Forms.Label();
             this.txtAverage = new System.Windows.Forms.TextBox();
-            this.lstbxCurrentScores = new System.Windows.Forms.ListBox();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.miDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.gbxRecord = new System.Windows.Forms.GroupBox();
             this.txtRecord = new System.Windows.Forms.TextBox();
             this.btnReset = new System.Windows.Forms.Button();
-            this.colRackNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colRackCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colRackScores = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Scores = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.gbxCurrentScore.SuspendLayout();
             this.gbxCurrentBest.SuspendLayout();
             this.gbxStatistics.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgCurrentScores)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgRackStatistics)).BeginInit();
             this.contextMenuStrip.SuspendLayout();
             this.gbxRecord.SuspendLayout();
@@ -75,8 +77,7 @@
             // 
             // txtCurrentScore
             // 
-            this.txtCurrentScore.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtCurrentScore.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCurrentScore.Location = new System.Drawing.Point(6, 19);
             this.txtCurrentScore.Name = "txtCurrentScore";
@@ -100,8 +101,7 @@
             // 
             // txtCurrentBest
             // 
-            this.txtCurrentBest.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtCurrentBest.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCurrentBest.Location = new System.Drawing.Point(6, 19);
             this.txtCurrentBest.Name = "txtCurrentBest";
@@ -113,8 +113,10 @@
             // 
             // gbxStatistics
             // 
-            this.gbxStatistics.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.gbxStatistics.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbxStatistics.Controls.Add(this.dgCurrentScores);
             this.gbxStatistics.Controls.Add(this.dgRackStatistics);
             this.gbxStatistics.Controls.Add(this.lblAverage);
             this.gbxStatistics.Controls.Add(this.txtTotalBalls);
@@ -124,7 +126,6 @@
             this.gbxStatistics.Controls.Add(this.txtTotalAttempts);
             this.gbxStatistics.Controls.Add(this.lblTotalAttemps);
             this.gbxStatistics.Controls.Add(this.txtAverage);
-            this.gbxStatistics.Controls.Add(this.lstbxCurrentScores);
             this.gbxStatistics.Location = new System.Drawing.Point(12, 180);
             this.gbxStatistics.Name = "gbxStatistics";
             this.gbxStatistics.Size = new System.Drawing.Size(352, 240);
@@ -132,12 +133,33 @@
             this.gbxStatistics.TabStop = false;
             this.gbxStatistics.Text = "Statistics";
             // 
+            // dgCurrentScores
+            // 
+            this.dgCurrentScores.AllowUserToAddRows = false;
+            this.dgCurrentScores.AllowUserToDeleteRows = false;
+            this.dgCurrentScores.AllowUserToResizeColumns = false;
+            this.dgCurrentScores.AllowUserToResizeRows = false;
+            this.dgCurrentScores.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.dgCurrentScores.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgCurrentScores.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgCurrentScores.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Scores});
+            this.dgCurrentScores.Location = new System.Drawing.Point(6, 17);
+            this.dgCurrentScores.MultiSelect = false;
+            this.dgCurrentScores.Name = "dgCurrentScores";
+            this.dgCurrentScores.RowHeadersVisible = false;
+            this.dgCurrentScores.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgCurrentScores.Size = new System.Drawing.Size(84, 108);
+            this.dgCurrentScores.TabIndex = 13;
+            // 
             // dgRackStatistics
             // 
             this.dgRackStatistics.AllowUserToAddRows = false;
             this.dgRackStatistics.AllowUserToDeleteRows = false;
             this.dgRackStatistics.AllowUserToResizeRows = false;
-            this.dgRackStatistics.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.dgRackStatistics.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgRackStatistics.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgRackStatistics.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -146,14 +168,44 @@
             this.colRackCount,
             this.colRackScores});
             this.dgRackStatistics.Location = new System.Drawing.Point(96, 17);
+            this.dgRackStatistics.MultiSelect = false;
             this.dgRackStatistics.Name = "dgRackStatistics";
             this.dgRackStatistics.RowHeadersVisible = false;
+            this.dgRackStatistics.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgRackStatistics.Size = new System.Drawing.Size(243, 108);
             this.dgRackStatistics.TabIndex = 12;
             // 
+            // colRackNumber
+            // 
+            this.colRackNumber.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.colRackNumber.DataPropertyName = "RackNumber";
+            this.colRackNumber.Frozen = true;
+            this.colRackNumber.HeaderText = "Rack";
+            this.colRackNumber.MaxInputLength = 3;
+            this.colRackNumber.Name = "colRackNumber";
+            this.colRackNumber.Width = 58;
+            // 
+            // colRackCount
+            // 
+            this.colRackCount.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.colRackCount.DataPropertyName = "RackCount";
+            this.colRackCount.Frozen = true;
+            this.colRackCount.HeaderText = "Count";
+            this.colRackCount.MaxInputLength = 3;
+            this.colRackCount.Name = "colRackCount";
+            this.colRackCount.Width = 60;
+            // 
+            // colRackScores
+            // 
+            this.colRackScores.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.colRackScores.DataPropertyName = "RackScores";
+            this.colRackScores.HeaderText = "Scores";
+            this.colRackScores.Name = "colRackScores";
+            // 
             // lblAverage
             // 
-            this.lblAverage.Location = new System.Drawing.Point(6, 208);
+            this.lblAverage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblAverage.Location = new System.Drawing.Point(6, 214);
             this.lblAverage.Name = "lblAverage";
             this.lblAverage.Size = new System.Drawing.Size(84, 20);
             this.lblAverage.TabIndex = 11;
@@ -162,9 +214,9 @@
             // 
             // txtTotalBalls
             // 
-            this.txtTotalBalls.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtTotalBalls.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTotalBalls.Location = new System.Drawing.Point(96, 183);
+            this.txtTotalBalls.Location = new System.Drawing.Point(96, 188);
             this.txtTotalBalls.Name = "txtTotalBalls";
             this.txtTotalBalls.ReadOnly = true;
             this.txtTotalBalls.Size = new System.Drawing.Size(243, 20);
@@ -173,7 +225,8 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(6, 182);
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label1.Location = new System.Drawing.Point(6, 187);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(84, 20);
             this.label1.TabIndex = 9;
@@ -182,9 +235,9 @@
             // 
             // txtTotalRacks
             // 
-            this.txtTotalRacks.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtTotalRacks.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTotalRacks.Location = new System.Drawing.Point(96, 157);
+            this.txtTotalRacks.Location = new System.Drawing.Point(96, 162);
             this.txtTotalRacks.Name = "txtTotalRacks";
             this.txtTotalRacks.ReadOnly = true;
             this.txtTotalRacks.Size = new System.Drawing.Size(243, 20);
@@ -193,7 +246,8 @@
             // 
             // lblTotalRacks
             // 
-            this.lblTotalRacks.Location = new System.Drawing.Point(6, 156);
+            this.lblTotalRacks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblTotalRacks.Location = new System.Drawing.Point(6, 161);
             this.lblTotalRacks.Name = "lblTotalRacks";
             this.lblTotalRacks.Size = new System.Drawing.Size(84, 20);
             this.lblTotalRacks.TabIndex = 7;
@@ -202,9 +256,9 @@
             // 
             // txtTotalAttempts
             // 
-            this.txtTotalAttempts.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtTotalAttempts.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTotalAttempts.Location = new System.Drawing.Point(96, 131);
+            this.txtTotalAttempts.Location = new System.Drawing.Point(96, 136);
             this.txtTotalAttempts.Name = "txtTotalAttempts";
             this.txtTotalAttempts.ReadOnly = true;
             this.txtTotalAttempts.Size = new System.Drawing.Size(243, 20);
@@ -213,7 +267,8 @@
             // 
             // lblTotalAttemps
             // 
-            this.lblTotalAttemps.Location = new System.Drawing.Point(6, 130);
+            this.lblTotalAttemps.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblTotalAttemps.Location = new System.Drawing.Point(6, 135);
             this.lblTotalAttemps.Name = "lblTotalAttemps";
             this.lblTotalAttemps.Size = new System.Drawing.Size(84, 20);
             this.lblTotalAttemps.TabIndex = 5;
@@ -222,25 +277,15 @@
             // 
             // txtAverage
             // 
-            this.txtAverage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtAverage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtAverage.Location = new System.Drawing.Point(96, 209);
+            this.txtAverage.Location = new System.Drawing.Point(96, 214);
             this.txtAverage.Name = "txtAverage";
             this.txtAverage.ReadOnly = true;
             this.txtAverage.Size = new System.Drawing.Size(243, 20);
             this.txtAverage.TabIndex = 4;
             this.txtAverage.TabStop = false;
             this.txtAverage.Text = "0";
-            // 
-            // lstbxCurrentScores
-            // 
-            this.lstbxCurrentScores.ContextMenuStrip = this.contextMenuStrip;
-            this.lstbxCurrentScores.FormattingEnabled = true;
-            this.lstbxCurrentScores.Location = new System.Drawing.Point(6, 17);
-            this.lstbxCurrentScores.Name = "lstbxCurrentScores";
-            this.lstbxCurrentScores.Size = new System.Drawing.Size(84, 108);
-            this.lstbxCurrentScores.TabIndex = 3;
-            this.lstbxCurrentScores.TabStop = false;
             // 
             // contextMenuStrip
             // 
@@ -270,8 +315,7 @@
             // 
             // txtRecord
             // 
-            this.txtRecord.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtRecord.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtRecord.Location = new System.Drawing.Point(6, 19);
             this.txtRecord.Name = "txtRecord";
@@ -283,7 +327,7 @@
             // 
             // btnReset
             // 
-            this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnReset.Location = new System.Drawing.Point(12, 426);
             this.btnReset.Name = "btnReset";
@@ -293,33 +337,15 @@
             this.btnReset.UseVisualStyleBackColor = true;
             this.btnReset.Click += new System.EventHandler(this.BtnResetClick);
             // 
-            // colRackNumber
+            // Scores
             // 
-            this.colRackNumber.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.colRackNumber.DataPropertyName = "RackNumber";
-            this.colRackNumber.Frozen = true;
-            this.colRackNumber.HeaderText = "Rack";
-            this.colRackNumber.MaxInputLength = 3;
-            this.colRackNumber.Name = "colRackNumber";
-            this.colRackNumber.Width = 58;
-            // 
-            // colRackCount
-            // 
-            this.colRackCount.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.colRackCount.DataPropertyName = "RackCount";
-            this.colRackCount.Frozen = true;
-            this.colRackCount.HeaderText = "Count";
-            this.colRackCount.MaxInputLength = 3;
-            this.colRackCount.Name = "colRackCount";
-            this.colRackCount.Width = 60;
-            // 
-            // colRackScores
-            // 
-            this.colRackScores.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.colRackScores.DataPropertyName = "RackScores";
-            this.colRackScores.HeaderText = "Scores";
-            this.colRackScores.Name = "colRackScores";
-            this.colRackScores.Width = 122;
+            this.Scores.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.Scores.DataPropertyName = "Score";
+            this.Scores.Frozen = true;
+            this.Scores.HeaderText = "Scores";
+            this.Scores.MaxInputLength = 3;
+            this.Scores.Name = "Scores";
+            this.Scores.ReadOnly = true;
             // 
             // FrmStraightPoolScoreKeeper
             // 
@@ -333,7 +359,7 @@
             this.Controls.Add(this.gbxCurrentScore);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(392, 496);
+            this.MaximumSize = new System.Drawing.Size(784, 992);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(392, 496);
             this.Name = "FrmStraightPoolScoreKeeper";
@@ -345,6 +371,7 @@
             this.gbxCurrentBest.PerformLayout();
             this.gbxStatistics.ResumeLayout(false);
             this.gbxStatistics.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgCurrentScores)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgRackStatistics)).EndInit();
             this.contextMenuStrip.ResumeLayout(false);
             this.gbxRecord.ResumeLayout(false);
@@ -361,7 +388,6 @@
         private System.Windows.Forms.TextBox txtCurrentBest;
         private System.Windows.Forms.GroupBox gbxStatistics;
         private System.Windows.Forms.TextBox txtAverage;
-        private System.Windows.Forms.ListBox lstbxCurrentScores;
         private System.Windows.Forms.GroupBox gbxRecord;
         private System.Windows.Forms.TextBox txtRecord;
         private System.Windows.Forms.Button btnReset;
@@ -378,6 +404,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn colRackNumber;
         private System.Windows.Forms.DataGridViewTextBoxColumn colRackCount;
         private System.Windows.Forms.DataGridViewTextBoxColumn colRackScores;
+        private System.Windows.Forms.DataGridView dgCurrentScores;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Scores;
     }
 }
 

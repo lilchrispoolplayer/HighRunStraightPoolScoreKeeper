@@ -42,10 +42,10 @@ namespace StraightPoolScoreKeeper
 
         private void MiDeleteClick(object sender, EventArgs e)
         {
-            if (lstbxCurrentScores.SelectedIndex == -1)
+            if (dgCurrentScores.SelectedRows.Count == 0)
                 return;
 
-            statisticsModel.DeleteCurrentScore(lstbxCurrentScores.SelectedIndex);
+            statisticsModel.DeleteCurrentScore(dgCurrentScores.SelectedRows[0].Index);
             CalculateStatistics(true);
         }
 
@@ -77,9 +77,10 @@ namespace StraightPoolScoreKeeper
                 statisticsModel.GetTotalBalls() / (double)statisticsModel.GetTotalPossibleBalls());
             txtAverage.Text = statisticsModel.GetAverage().ToString();
 
-            lstbxCurrentScores.DataSource = statisticsModel.GetCurrentScores();
-            lstbxCurrentScores.SelectedIndex = lstbxCurrentScores.Items.Count - 1;
-
+            dgCurrentScores.DataSource = statisticsModel.GetCurrentScores().ToList();
+            dgCurrentScores.FirstDisplayedScrollingRowIndex = dgCurrentScores.Rows.Count - 1;
+            dgCurrentScores.Rows[dgCurrentScores.Rows.Count - 1].Selected = true;
+            
             dgRackStatistics.DataSource = statisticsModel.GetRackStatistcs().OrderBy(stat => stat.RackNumber).ToList();
         }
     }
