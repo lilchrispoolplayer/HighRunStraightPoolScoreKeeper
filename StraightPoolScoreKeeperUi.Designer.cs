@@ -36,6 +36,9 @@
             this.txtCurrentBest = new System.Windows.Forms.TextBox();
             this.gbxStatistics = new System.Windows.Forms.GroupBox();
             this.dgCurrentScores = new System.Windows.Forms.DataGridView();
+            this.Scores = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.miDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.dgRackStatistics = new System.Windows.Forms.DataGridView();
             this.colRackNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colRackCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -48,18 +51,15 @@
             this.txtTotalAttempts = new System.Windows.Forms.TextBox();
             this.lblTotalAttemps = new System.Windows.Forms.Label();
             this.txtAverage = new System.Windows.Forms.TextBox();
-            this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.miDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.gbxRecord = new System.Windows.Forms.GroupBox();
             this.txtRecord = new System.Windows.Forms.TextBox();
             this.btnReset = new System.Windows.Forms.Button();
-            this.Scores = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.gbxCurrentScore.SuspendLayout();
             this.gbxCurrentBest.SuspendLayout();
             this.gbxStatistics.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgCurrentScores)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgRackStatistics)).BeginInit();
             this.contextMenuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgRackStatistics)).BeginInit();
             this.gbxRecord.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -84,6 +84,7 @@
             this.txtCurrentScore.Size = new System.Drawing.Size(333, 20);
             this.txtCurrentScore.TabIndex = 0;
             this.txtCurrentScore.Text = "0";
+            this.txtCurrentScore.TextChanged += new System.EventHandler(this.TxtCurrentScoreTextChanged);
             this.txtCurrentScore.Enter += new System.EventHandler(this.TxtCurrentScoreEnter);
             this.txtCurrentScore.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtCurrentScoreKeyPress);
             // 
@@ -110,6 +111,7 @@
             this.txtCurrentBest.TabIndex = 0;
             this.txtCurrentBest.TabStop = false;
             this.txtCurrentBest.Text = "0";
+            this.txtCurrentBest.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtCurrentBestKeyPress);
             // 
             // gbxStatistics
             // 
@@ -145,6 +147,7 @@
             this.dgCurrentScores.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgCurrentScores.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Scores});
+            this.dgCurrentScores.ContextMenuStrip = this.contextMenuStrip;
             this.dgCurrentScores.Location = new System.Drawing.Point(6, 17);
             this.dgCurrentScores.MultiSelect = false;
             this.dgCurrentScores.Name = "dgCurrentScores";
@@ -152,6 +155,30 @@
             this.dgCurrentScores.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgCurrentScores.Size = new System.Drawing.Size(84, 108);
             this.dgCurrentScores.TabIndex = 13;
+            // 
+            // Scores
+            // 
+            this.Scores.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.Scores.DataPropertyName = "Score";
+            this.Scores.Frozen = true;
+            this.Scores.HeaderText = "Scores";
+            this.Scores.MaxInputLength = 3;
+            this.Scores.Name = "Scores";
+            this.Scores.ReadOnly = true;
+            // 
+            // contextMenuStrip
+            // 
+            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.miDelete});
+            this.contextMenuStrip.Name = "contextMenuStrip";
+            this.contextMenuStrip.Size = new System.Drawing.Size(108, 26);
+            // 
+            // miDelete
+            // 
+            this.miDelete.Name = "miDelete";
+            this.miDelete.Size = new System.Drawing.Size(107, 22);
+            this.miDelete.Text = "Delete";
+            this.miDelete.Click += new System.EventHandler(this.MiDeleteClick);
             // 
             // dgRackStatistics
             // 
@@ -179,28 +206,32 @@
             // 
             this.colRackNumber.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
             this.colRackNumber.DataPropertyName = "RackNumber";
-            this.colRackNumber.Frozen = true;
             this.colRackNumber.HeaderText = "Rack";
             this.colRackNumber.MaxInputLength = 3;
             this.colRackNumber.Name = "colRackNumber";
+            this.colRackNumber.ReadOnly = true;
+            this.colRackNumber.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.colRackNumber.Width = 58;
             // 
             // colRackCount
             // 
             this.colRackCount.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
             this.colRackCount.DataPropertyName = "RackCount";
-            this.colRackCount.Frozen = true;
             this.colRackCount.HeaderText = "Count";
             this.colRackCount.MaxInputLength = 3;
             this.colRackCount.Name = "colRackCount";
+            this.colRackCount.ReadOnly = true;
+            this.colRackCount.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.colRackCount.Width = 60;
             // 
             // colRackScores
             // 
-            this.colRackScores.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.colRackScores.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.colRackScores.DataPropertyName = "RackScores";
             this.colRackScores.HeaderText = "Scores";
             this.colRackScores.Name = "colRackScores";
+            this.colRackScores.ReadOnly = true;
+            this.colRackScores.Width = 65;
             // 
             // lblAverage
             // 
@@ -287,20 +318,6 @@
             this.txtAverage.TabStop = false;
             this.txtAverage.Text = "0";
             // 
-            // contextMenuStrip
-            // 
-            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.miDelete});
-            this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(108, 26);
-            // 
-            // miDelete
-            // 
-            this.miDelete.Name = "miDelete";
-            this.miDelete.Size = new System.Drawing.Size(107, 22);
-            this.miDelete.Text = "Delete";
-            this.miDelete.Click += new System.EventHandler(this.MiDeleteClick);
-            // 
             // gbxRecord
             // 
             this.gbxRecord.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -337,16 +354,6 @@
             this.btnReset.UseVisualStyleBackColor = true;
             this.btnReset.Click += new System.EventHandler(this.BtnResetClick);
             // 
-            // Scores
-            // 
-            this.Scores.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.Scores.DataPropertyName = "Score";
-            this.Scores.Frozen = true;
-            this.Scores.HeaderText = "Scores";
-            this.Scores.MaxInputLength = 3;
-            this.Scores.Name = "Scores";
-            this.Scores.ReadOnly = true;
-            // 
             // FrmStraightPoolScoreKeeper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -363,7 +370,7 @@
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(392, 496);
             this.Name = "FrmStraightPoolScoreKeeper";
-            this.Text = "Straight Pool Score Keeper";
+            this.Text = "High Run Straight Pool Score Keeper";
             this.TopMost = true;
             this.gbxCurrentScore.ResumeLayout(false);
             this.gbxCurrentScore.PerformLayout();
@@ -372,8 +379,8 @@
             this.gbxStatistics.ResumeLayout(false);
             this.gbxStatistics.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgCurrentScores)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgRackStatistics)).EndInit();
             this.contextMenuStrip.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgRackStatistics)).EndInit();
             this.gbxRecord.ResumeLayout(false);
             this.gbxRecord.PerformLayout();
             this.ResumeLayout(false);
@@ -401,11 +408,11 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem miDelete;
         private System.Windows.Forms.DataGridView dgRackStatistics;
+        private System.Windows.Forms.DataGridView dgCurrentScores;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Scores;
         private System.Windows.Forms.DataGridViewTextBoxColumn colRackNumber;
         private System.Windows.Forms.DataGridViewTextBoxColumn colRackCount;
         private System.Windows.Forms.DataGridViewTextBoxColumn colRackScores;
-        private System.Windows.Forms.DataGridView dgCurrentScores;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Scores;
     }
 }
 

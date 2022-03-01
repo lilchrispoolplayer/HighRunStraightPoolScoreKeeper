@@ -27,17 +27,42 @@ namespace StraightPoolScoreKeeper
         {
             if (e.KeyChar == (char)13)
             {
-                SaveCurrentScore(txtCurrentScore.Text);
+                SaveCurrentScore(Convert.ToInt32(txtCurrentScore.Text));
                 txtCurrentScore.SelectAll();
+            }
+            else if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void TxtCurrentScoreTextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtCurrentScore.Text))
+            {
+                txtCurrentScore.Text = "0";
+                txtCurrentScore.SelectAll();
+            }
+        }
+
+        private void TxtCurrentBestKeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+            {
+                statisticsModel.SaveCurrentBest(Convert.ToInt32(txtCurrentBest.Text));
+            }
+            else if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
+            {
+                e.Handled = true;
             }
         }
 
         private void BtnResetClick(object sender, EventArgs e)
         {
-            SaveCurrentScore(txtCurrentScore.Text);
+            SaveCurrentScore(Convert.ToInt32(txtCurrentScore.Text));
             CalculateStatistics(false);
 
-            SaveCurrentScore("0");
+            SaveCurrentScore(0);
         }
 
         private void MiDeleteClick(object sender, EventArgs e)
@@ -49,18 +74,14 @@ namespace StraightPoolScoreKeeper
             CalculateStatistics(true);
         }
 
-        private void SaveCurrentScore(string score)
+        private void SaveCurrentScore(int score)
         {
-            if (!statisticsModel.SaveCurrentScore(score))
-            {
-                MessageBox.Show("Error saving current score. Not a valid score!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
+            statisticsModel.SaveCurrentScore(score);
 
             txtCurrentBest.Text = statisticsModel.GetCurrentBest().ToString();
             txtRecord.Text = statisticsModel.GetRecord().ToString();
 
-            txtCurrentScore.Text = score;
+            txtCurrentScore.Text = score.ToString();
             txtCurrentScore.Focus();
             txtCurrentScore.SelectAll();
         }
@@ -69,17 +90,24 @@ namespace StraightPoolScoreKeeper
         {
             statisticsModel.CalculateStatistics(deleting);
 
+            txtCurrentBest.Text = statisticsModel.GetCurrentBest().ToString();
             txtTotalAttempts.Text = statisticsModel.GetTotalAttempts().ToString();
-            txtTotalRacks.Text = statisticsModel.GetTotalRacks().ToString();
-            txtTotalBalls.Text = string.Format("{0} of {1} ({2:P0})", 
+            txtTotalRacks.Text = string.Format("{0} of {1} ({2:P0})",
+                statisticsModel.GetTotalRacks().ToString(),
+                statisticsModel.GetTotalPossibleRacks(),
+                statisticsModel.GetRacksCompletedPercentage());
+            txtTotalBalls.Text = string.Format("{0} of {1} ({2:P0})",
                 statisticsModel.GetTotalBalls().ToString(),
                 statisticsModel.GetTotalPossibleBalls(),
-                statisticsModel.GetTotalBalls() / (double)statisticsModel.GetTotalPossibleBalls());
+                statisticsModel.GetBallPocketingPercentage());
             txtAverage.Text = statisticsModel.GetAverage().ToString();
 
             dgCurrentScores.DataSource = statisticsModel.GetCurrentScores().ToList();
-            dgCurrentScores.FirstDisplayedScrollingRowIndex = dgCurrentScores.Rows.Count - 1;
-            dgCurrentScores.Rows[dgCurrentScores.Rows.Count - 1].Selected = true;
+            if (dgCurrentScores.Rows.Count > 0)
+            {
+                dgCurrentScores.FirstDisplayedScrollingRowIndex = dgCurrentScores.Rows.Count - 1;
+                dgCurrentScores.Rows[dgCurrentScores.Rows.Count - 1].Selected = true;
+            }
             
             dgRackStatistics.DataSource = statisticsModel.GetRackStatistcs().OrderBy(stat => stat.RackNumber).ToList();
         }

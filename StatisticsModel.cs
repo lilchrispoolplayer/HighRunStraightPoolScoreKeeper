@@ -21,6 +21,7 @@ namespace StraightPoolScoreKeeper
 
         private int totalAttempts;
         private int totalRacks;
+        private int totalPossibleRacks;
         private int totalBalls;
         private int totalPossibleBalls;
         private int average;
@@ -38,7 +39,7 @@ namespace StraightPoolScoreKeeper
         {
             CreateFiles();
             LoadField(ref record, RECORD_TXT);
-            SaveCurrentScore("0");
+            SaveCurrentScore(0);
             CalculateStatistics(true);
         }
 
@@ -87,6 +88,11 @@ namespace StraightPoolScoreKeeper
             return totalRacks;
         }
 
+        public int GetTotalPossibleRacks()
+        {
+            return totalPossibleRacks;
+        }
+
         /// <summary>
         /// Gets total balls pocketed
         /// </summary>
@@ -123,21 +129,37 @@ namespace StraightPoolScoreKeeper
             return rackStatistics;
         }
 
+        public double GetRacksCompletedPercentage()
+        {
+            if (totalRacks == 0 && totalPossibleRacks == 0)
+                return 0;
+
+            return totalRacks / (double)totalPossibleRacks;
+        }
+
+        /// <summary>
+        /// Returns the percentage of balls pocketed
+        /// </summary>
+        /// <returns></returns>
+        public double GetBallPocketingPercentage()
+        {
+            if (totalBalls == 0 && totalPossibleBalls == 0)
+                return 0;
+
+            return totalBalls / (double)totalPossibleBalls;
+        }
+
         /// <summary>
         /// Saves the current score to file
         /// </summary>
         /// <param name="score">Current score to save</param>
-        /// <returns>True/False if save is successful</returns>
-        public bool SaveCurrentScore(string score)
+        public void SaveCurrentScore(int  score)
         {
-            if (!int.TryParse(score, out currentScore))
-                return false;
+            currentScore = score;
 
             SaveField(currentScore, CURRENT_SCORE_TXT);
-            SaveCurrentBest();
-            SaveRecord();
-
-            return true;
+            SaveCurrentBest(currentScore);
+            SaveRecord(currentBest);
         }
 
         /// <summary>
@@ -156,10 +178,12 @@ namespace StraightPoolScoreKeeper
 
             totalBalls = currentScores.Sum(sm => sm.Score);
             totalRacks = 0;
+            totalPossibleRacks = 0;
             currentScores.ForEach(sm => {
-                totalRacks += sm.Score / 14 + 1;
+                totalRacks += sm.Score / 14;
+                totalPossibleRacks += sm.Score / 14 + 1;
             });
-            totalPossibleBalls = totalRacks * 14;
+            totalPossibleBalls = totalPossibleRacks * 14;
             totalAttempts = currentScores.Count;
         }
 
@@ -171,29 +195,37 @@ namespace StraightPoolScoreKeeper
         {
             int score = currentScores[scoreIndex].Score;
             currentScores.RemoveAt(scoreIndex);
+
+            if (currentScores.Count == 0)
+                currentBest = 0;
+            else
+            {
+                currentBest = currentScores.Max().Score;
+                SaveCurrentBest(currentBest);
+            }
         }
 
         /// <summary>
         /// Saves the current best score to a file
         /// </summary>
-        private void SaveCurrentBest()
+        public void SaveCurrentBest(int score)
         {
-            if (currentScore < currentBest)
+            if (score < currentBest)
                 return;
 
-            currentBest = currentScore;
+            currentBest = score;
             SaveField(currentBest, CURRENT_BEST_TXT);
         }
 
         /// <summary>
         /// Saves the current record to a file
         /// </summary>
-        private void SaveRecord()
+        public void SaveRecord(int score)
         {
-            if (currentBest < record)
+            if (score < record)
                 return;
 
-            record = currentBest;
+            record = score;
             SaveField(record, RECORD_TXT);
         }
 
@@ -204,7 +236,8 @@ namespace StraightPoolScoreKeeper
         {
             if (currentScores.Count == 0)
             {
-                SaveField(0, AVERAGE_TXT);
+                average = 0;
+                SaveField(average, AVERAGE_TXT);
                 return;
             }
 
