@@ -155,6 +155,7 @@
             this.dgCurrentScores.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgCurrentScores.Size = new System.Drawing.Size(84, 108);
             this.dgCurrentScores.TabIndex = 13;
+            this.dgCurrentScores.TabStop = false;
             // 
             // Scores
             // 
@@ -201,6 +202,7 @@
             this.dgRackStatistics.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgRackStatistics.Size = new System.Drawing.Size(243, 108);
             this.dgRackStatistics.TabIndex = 12;
+            this.dgRackStatistics.TabStop = false;
             // 
             // colRackNumber
             // 
@@ -252,6 +254,7 @@
             this.txtTotalBalls.ReadOnly = true;
             this.txtTotalBalls.Size = new System.Drawing.Size(243, 20);
             this.txtTotalBalls.TabIndex = 10;
+            this.txtTotalBalls.TabStop = false;
             this.txtTotalBalls.Text = "0";
             // 
             // label1
@@ -273,6 +276,7 @@
             this.txtTotalRacks.ReadOnly = true;
             this.txtTotalRacks.Size = new System.Drawing.Size(243, 20);
             this.txtTotalRacks.TabIndex = 8;
+            this.txtTotalRacks.TabStop = false;
             this.txtTotalRacks.Text = "0";
             // 
             // lblTotalRacks
@@ -294,6 +298,7 @@
             this.txtTotalAttempts.ReadOnly = true;
             this.txtTotalAttempts.Size = new System.Drawing.Size(243, 20);
             this.txtTotalAttempts.TabIndex = 6;
+            this.txtTotalAttempts.TabStop = false;
             this.txtTotalAttempts.Text = "0";
             // 
             // lblTotalAttemps

@@ -200,7 +200,7 @@ namespace StraightPoolScoreKeeper
                 currentBest = 0;
             else
             {
-                currentBest = currentScores.Max().Score;
+                currentBest = currentScores.OrderByDescending(s => s.Score).First().Score;
                 SaveCurrentBest(currentBest);
             }
         }
