@@ -7,6 +7,9 @@ namespace StraightPoolScoreKeeper
     public partial class FrmStraightPoolScoreKeeper : Form
     {
         private StatisticsModel statisticsModel = new StatisticsModel();
+        private const int ScoresSeries = 0;
+        private const int HandicapsSeries = 1;
+        private const int AveragesSeries = 2;
 
         public FrmStraightPoolScoreKeeper()
         {
@@ -15,6 +18,7 @@ namespace StraightPoolScoreKeeper
             txtCurrentBest.Text = statisticsModel.GetCurrentBest().ToString();
             txtRecord.Text = statisticsModel.GetRecord().ToString();
             txtAverage.Text = statisticsModel.GetAverage().ToString();
+            txtHandicap.Text = statisticsModel.GetHandicap().ToString();
         }
 
         private void TxtCurrentScoreEnter(object sender, EventArgs e)
@@ -102,6 +106,13 @@ namespace StraightPoolScoreKeeper
                 statisticsModel.GetBallPocketingPercentage());
             txtAverage.Text = statisticsModel.GetAverage().ToString();
 
+            // Update the Handicap value
+            txtHandicap.Text = statisticsModel.GetHandicap().ToString();
+            // Update the running chart with the latest data
+            chart1.Series[ScoresSeries].Points.DataBindY(statisticsModel.GetCurrentScoresList());
+            chart1.Series[HandicapsSeries].Points.DataBindY(statisticsModel.GetCurrentHandicapsList());
+            chart1.Series[AveragesSeries].Points.DataBindY(statisticsModel.GetCurrentAveragesList());
+
             dgCurrentScores.DataSource = statisticsModel.GetCurrentScores().ToList();
             if (dgCurrentScores.Rows.Count > 0)
             {
@@ -110,6 +121,29 @@ namespace StraightPoolScoreKeeper
             }
             
             dgRackStatistics.DataSource = statisticsModel.GetRackStatistcs().OrderBy(stat => stat.RackNumber).ToList();
+        }
+
+        /// <summary>
+        /// Used for testing.  Populates the 'Current Score' field with a random number
+        /// and simulates clicking the 'Reset' button.
+        /// (Button removed from the UI, but can be added back if needed)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Random random = new Random();
+
+            int iVal = random.Next(0, 100); // Calculate a value from 0 to 99, inclusive
+            int iRandomScore = 0;
+            if (iVal < 10)
+                iRandomScore = random.Next(29, 43); // 10% chance of scoring 29 to 42
+            else if (iVal < 40)
+                iRandomScore = random.Next(10, 29); // 30% chance of scoring 10 to 28
+            else
+                iRandomScore = random.Next(0, 10); // 60% chance of scoring 0 to 9
+            txtCurrentScore.Text = iRandomScore.ToString();
+            BtnResetClick(sender, e);
         }
     }
 }
