@@ -45,6 +45,9 @@
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.miDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.dgRackStatistics = new System.Windows.Forms.DataGridView();
+            this.colRackNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colRackCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colRackScores = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.lblAverage = new System.Windows.Forms.Label();
             this.txtTotalBalls = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -57,9 +60,6 @@
             this.txtRecord = new System.Windows.Forms.TextBox();
             this.btnReset = new System.Windows.Forms.Button();
             this.chtAveragesScores = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.colRackNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colRackCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colRackScores = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.gbxCurrentScore.SuspendLayout();
             this.gbxCurrentBest.SuspendLayout();
             this.gbxStatistics.SuspendLayout();
@@ -207,6 +207,36 @@
             this.dgRackStatistics.Size = new System.Drawing.Size(445, 171);
             this.dgRackStatistics.TabIndex = 12;
             this.dgRackStatistics.TabStop = false;
+            // 
+            // colRackNumber
+            // 
+            this.colRackNumber.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.colRackNumber.DataPropertyName = "RackNumber";
+            this.colRackNumber.HeaderText = "Rack";
+            this.colRackNumber.MaxInputLength = 3;
+            this.colRackNumber.Name = "colRackNumber";
+            this.colRackNumber.ReadOnly = true;
+            this.colRackNumber.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.colRackNumber.Width = 58;
+            // 
+            // colRackCount
+            // 
+            this.colRackCount.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.colRackCount.DataPropertyName = "RackCount";
+            this.colRackCount.HeaderText = "Count";
+            this.colRackCount.MaxInputLength = 3;
+            this.colRackCount.Name = "colRackCount";
+            this.colRackCount.ReadOnly = true;
+            this.colRackCount.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.colRackCount.Width = 60;
+            // 
+            // colRackScores
+            // 
+            this.colRackScores.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.colRackScores.DataPropertyName = "RackScores";
+            this.colRackScores.HeaderText = "Scores";
+            this.colRackScores.Name = "colRackScores";
+            this.colRackScores.ReadOnly = true;
             // 
             // lblAverage
             // 
@@ -397,38 +427,8 @@
             title1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             title1.ForeColor = System.Drawing.Color.White;
             title1.Name = "Title1";
-            title1.Text = "Averages & Sccores";
+            title1.Text = "Averages & Scores";
             this.chtAveragesScores.Titles.Add(title1);
-            // 
-            // colRackNumber
-            // 
-            this.colRackNumber.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.colRackNumber.DataPropertyName = "RackNumber";
-            this.colRackNumber.HeaderText = "Rack";
-            this.colRackNumber.MaxInputLength = 3;
-            this.colRackNumber.Name = "colRackNumber";
-            this.colRackNumber.ReadOnly = true;
-            this.colRackNumber.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.colRackNumber.Width = 58;
-            // 
-            // colRackCount
-            // 
-            this.colRackCount.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.colRackCount.DataPropertyName = "RackCount";
-            this.colRackCount.HeaderText = "Count";
-            this.colRackCount.MaxInputLength = 3;
-            this.colRackCount.Name = "colRackCount";
-            this.colRackCount.ReadOnly = true;
-            this.colRackCount.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.colRackCount.Width = 60;
-            // 
-            // colRackScores
-            // 
-            this.colRackScores.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.colRackScores.DataPropertyName = "RackScores";
-            this.colRackScores.HeaderText = "Scores";
-            this.colRackScores.Name = "colRackScores";
-            this.colRackScores.ReadOnly = true;
             // 
             // FrmStraightPoolScoreKeeper
             // 
