@@ -7,9 +7,8 @@ namespace StraightPoolScoreKeeper
     public partial class FrmStraightPoolScoreKeeper : Form
     {
         private StatisticsModel statisticsModel = new StatisticsModel();
-        private const int ScoresSeries = 0;
-        private const int HandicapsSeries = 1;
-        private const int AveragesSeries = 2;
+        private const int SCORE_SERIES = 0;
+        private const int AVERAGE_SERIES = 1;
 
         public FrmStraightPoolScoreKeeper()
         {
@@ -18,7 +17,6 @@ namespace StraightPoolScoreKeeper
             txtCurrentBest.Text = statisticsModel.GetCurrentBest().ToString();
             txtRecord.Text = statisticsModel.GetRecord().ToString();
             txtAverage.Text = statisticsModel.GetAverage().ToString();
-            txtHandicap.Text = statisticsModel.GetHandicap().ToString();
         }
 
         private void TxtCurrentScoreEnter(object sender, EventArgs e)
@@ -53,7 +51,19 @@ namespace StraightPoolScoreKeeper
         {
             if (e.KeyChar == (char)13)
             {
-                statisticsModel.SaveCurrentBest(Convert.ToInt32(txtCurrentBest.Text));
+                statisticsModel.SaveCurrentBest(Convert.ToInt32(txtCurrentBest.Text), true);
+            }
+            else if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void TxtRecordKeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+            {
+                statisticsModel.SaveRecord(Convert.ToInt32(txtRecord.Text), true);
             }
             else if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
             {
@@ -106,13 +116,6 @@ namespace StraightPoolScoreKeeper
                 statisticsModel.GetBallPocketingPercentage());
             txtAverage.Text = statisticsModel.GetAverage().ToString();
 
-            // Update the Handicap value
-            txtHandicap.Text = statisticsModel.GetHandicap().ToString();
-            // Update the running chart with the latest data
-            chart1.Series[ScoresSeries].Points.DataBindY(statisticsModel.GetCurrentScoresList());
-            chart1.Series[HandicapsSeries].Points.DataBindY(statisticsModel.GetCurrentHandicapsList());
-            chart1.Series[AveragesSeries].Points.DataBindY(statisticsModel.GetCurrentAveragesList());
-
             dgCurrentScores.DataSource = statisticsModel.GetCurrentScores().ToList();
             if (dgCurrentScores.Rows.Count > 0)
             {
@@ -121,29 +124,26 @@ namespace StraightPoolScoreKeeper
             }
             
             dgRackStatistics.DataSource = statisticsModel.GetRackStatistcs().OrderBy(stat => stat.RackNumber).ToList();
+
+            PlotAveragesAndScoresOnLineChart();
         }
 
-        /// <summary>
-        /// Used for testing.  Populates the 'Current Score' field with a random number
-        /// and simulates clicking the 'Reset' button.
-        /// (Button removed from the UI, but can be added back if needed)
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button1_Click(object sender, EventArgs e)
+        private void PlotAveragesAndScoresOnLineChart()
         {
-            Random random = new Random();
+            if (statisticsModel.GetCurrentScores().Count == 0)
+            {
+                chtAveragesScores.Series[SCORE_SERIES].Points.Clear();
+                chtAveragesScores.Series[AVERAGE_SERIES].Points.Clear();
+                return;
+            }
 
-            int iVal = random.Next(0, 100); // Calculate a value from 0 to 99, inclusive
-            int iRandomScore = 0;
-            if (iVal < 10)
-                iRandomScore = random.Next(29, 43); // 10% chance of scoring 29 to 42
-            else if (iVal < 40)
-                iRandomScore = random.Next(10, 29); // 30% chance of scoring 10 to 28
-            else
-                iRandomScore = random.Next(0, 10); // 60% chance of scoring 0 to 9
-            txtCurrentScore.Text = iRandomScore.ToString();
-            BtnResetClick(sender, e);
+            var scores = statisticsModel.GetCurrentScores().Select(s => s.Score).ToList();
+            scores.Insert(0, 0);
+            chtAveragesScores.Series[SCORE_SERIES].Points.DataBindXY(Enumerable.Range(0, scores.Count).ToList(), scores);
+            
+            var averages = statisticsModel.GetCurrentAveragesList().ToList();
+            averages.Insert(0, 0);
+            chtAveragesScores.Series[AVERAGE_SERIES].Points.DataBindXY(Enumerable.Range(0, averages.Count).ToList(), averages);
         }
     }
 }

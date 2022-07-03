@@ -28,13 +28,8 @@ namespace StraightPoolScoreKeeper
 
         private List<ScoreModel> currentScores = new List<ScoreModel>();
         private List<RackStatistics> rackStatistics = new List<RackStatistics>();
-        private List<int> handicapsList = new List<int>();
         private List<int> averagesList = new List<int>();
-
-        // Handicap is Average of Best 10 of the Last 20 scores
-        private const int HandicapBest = 10;
-        private const int HandicapLast = 20;
-
+        
         /// <summary>
         /// Default constructor 
         /// 
@@ -74,38 +69,6 @@ namespace StraightPoolScoreKeeper
         public int GetAverage()
         {
             return average;
-        }
-
-        /// <summary>
-        /// Gets the Handicap value (an average number of balls pocketed
-        /// from the Best 'x' scores of the most recent 'y' scores)
-        /// Returns 0 until 'y' scores have been entered
-        /// </summary>
-        /// <returns>Handicap value</returns>
-        public int GetHandicap()
-        {
-            return Handicap;
-        }
-
-        /// <summary>
-        /// Gets the list of all current scores for this session 
-        /// </summary>
-        /// <returns>The List of integer score values</returns>
-        public List<int> GetCurrentScoresList()
-        {
-            List<int> scoresList = new List<int>();
-            foreach (ScoreModel sm in currentScores)
-                scoresList.Add(sm.Score);
-            return scoresList;
-        }
-
-        /// <summary>
-        /// Gets the list of all current Handicaps for this session 
-        /// </summary>
-        /// <returns>The List of integer handicap values</returns>
-        public List<int> GetCurrentHandicapsList()
-        {
-            return handicapsList;
         }
 
         /// <summary>
@@ -205,8 +168,8 @@ namespace StraightPoolScoreKeeper
             currentScore = score;
 
             SaveField(currentScore, CURRENT_SCORE_TXT);
-            SaveCurrentBest(currentScore);
-            SaveRecord(currentBest);
+            SaveCurrentBest(currentScore, false);
+            SaveRecord(currentBest, false);
         }
 
         /// <summary>
@@ -221,7 +184,11 @@ namespace StraightPoolScoreKeeper
             }
 
             CalculateRackStatistics();
-            SaveAverage();
+            CalculateAndSaveAverage();
+            if (!deleting)
+            {
+                averagesList.Add(average);
+            }
 
             totalBalls = currentScores.Sum(sm => sm.Score);
             totalRacks = 0;
@@ -232,11 +199,6 @@ namespace StraightPoolScoreKeeper
             });
             totalPossibleBalls = totalPossibleRacks * 14;
             totalAttempts = currentScores.Count;
-            if (!deleting)
-            {
-                averagesList.Add(average);
-                handicapsList.Add(Handicap);
-            }
         }
 
         /// <summary>
@@ -247,7 +209,6 @@ namespace StraightPoolScoreKeeper
         {
             int score = currentScores[scoreIndex].Score;
             currentScores.RemoveAt(scoreIndex);
-            handicapsList.RemoveAt(scoreIndex);
             averagesList.RemoveAt(scoreIndex);
 
             if (currentScores.Count == 0)
@@ -255,16 +216,16 @@ namespace StraightPoolScoreKeeper
             else
             {
                 currentBest = currentScores.OrderByDescending(s => s.Score).First().Score;
-                SaveCurrentBest(currentBest);
+                SaveCurrentBest(currentBest, false);
             }
         }
 
         /// <summary>
         /// Saves the current best score to a file
         /// </summary>
-        public void SaveCurrentBest(int score)
+        public void SaveCurrentBest(int score, bool overwrite)
         {
-            if (score < currentBest)
+            if (!overwrite && score < currentBest)
                 return;
 
             currentBest = score;
@@ -274,9 +235,9 @@ namespace StraightPoolScoreKeeper
         /// <summary>
         /// Saves the current record to a file
         /// </summary>
-        public void SaveRecord(int score)
+        public void SaveRecord(int score, bool overwrite)
         {
-            if (score < record)
+            if (!overwrite && score < record)
                 return;
 
             record = score;
@@ -286,7 +247,7 @@ namespace StraightPoolScoreKeeper
         /// <summary>
         /// Saves the current average to a file
         /// </summary>
-        private void SaveAverage()
+        private void CalculateAndSaveAverage()
         {
             if (currentScores.Count == 0)
             {
@@ -373,107 +334,6 @@ namespace StraightPoolScoreKeeper
             if (!File.Exists(file))
             {
                 SaveField(0, file);
-            }
-        }
-
-        /// <summary>
-        /// Return the array of the Last set of scores to potentially factor into the Handicap
-        /// or null if there are not yet enough scores
-        /// </summary>
-        /// <returns>integer array with the set of scores, or null (if not enough scores)</returns>
-        private int[] LastHandicapScores()
-        {
-            int[] Last = null;
-
-            if (currentScores.Count >= HandicapLast)
-            {
-                Last = new int[HandicapLast];
-                int iStart = currentScores.Count - HandicapLast;
-                for (int i = 0; i < HandicapLast;i++)
-                {
-                    Last[i] = currentScores[iStart].Score;
-                    iStart++;
-                }
-            }
-            return Last;
-        }
-
-        /// <summary>
-        /// Given an array of integers, identify and return
-        /// the index (position) of the lowest value within the array
-        /// (in case of ties, the index of the first entry is returned)
-        /// </summary>
-        /// <param name="arr">An array with 1 or more integers</param>
-        /// <returns>The index (position) where the lowest value was found</returns>
-        private int IndexOfLowest(int[] arr)
-        {
-            int iLow = 0;
-            if (arr.Length > 1)
-            {
-                for (int i = 1; i < arr.Length; i++)
-                {
-                    if (arr[i] < arr[iLow])
-                    {
-                        iLow = i;
-                    }
-                }
-            }
-            return iLow;
-        }
-
-        /// <summary>
-        /// Return the array of the Best set of scores to factor into the Handicap
-        /// (taken from within the larger set of potential scores)
-        /// or null if there are not yet enough scores
-        /// </summary>
-        /// <returns>integer array with the set of scores, or null (if not enough scores)</returns>
-        private int[] BestHandicapScores()
-        {
-            int[] Best = null;
-            int[] Last = LastHandicapScores();
-            if (Last != null)
-            {
-                Best = new int[HandicapBest];
-                // Step 1 - Populate the Best array with the first part of the Last array
-                for ( int i = 0; i < HandicapBest; i++)
-                {
-                    Best[i] = Last[i];
-                }
-
-                // Step 2 - for each of the remaining values in the Last array
-                //          check if it is larger than the lowest value in the Best array
-                //          if so, replace the value in the Best array with the value from the Last array
-                for (int iLast = HandicapBest; iLast < HandicapLast; iLast++)
-                {
-                    int ixLow = IndexOfLowest(Best);
-                    if (Last[iLast] > Best[ixLow])
-                    {
-                        Best[ixLow] = Last[iLast];
-                    }
-                }
-            }
-            return Best;
-        }
-
-        /// <summary>
-        /// Calculate the Handicap value by taking the average of the 
-        /// best 'x' scores out of the set of 'y' most recent scores
-        /// </summary>
-        private int Handicap
-        {
-            get
-            {
-                int iHandicap = 0;
-                int[] Best = BestHandicapScores();
-                if (Best != null)
-                {
-                    int iTotal = 0;
-                    for (int i = 0; i < HandicapBest; i++)
-                        iTotal += Best[i];
-                    // Calculate the average, rounding down (0 to 4) or up (5 to 9)
-                    iHandicap = (iTotal + (HandicapBest / 2)) / HandicapBest;
-                }
-                return iHandicap;
             }
         }
     }
