@@ -258,6 +258,8 @@ namespace StraightPoolScoreKeeper
         {
             currentScores.Clear();
             averagesList.Clear();
+            average = 0;
+            currentBest = 0;
             SaveScores();
         }
 
