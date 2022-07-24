@@ -40,7 +40,9 @@
             this.gbxCurrentBest = new System.Windows.Forms.GroupBox();
             this.txtCurrentBest = new System.Windows.Forms.TextBox();
             this.gbxStatistics = new System.Windows.Forms.GroupBox();
+            this.btnClear = new System.Windows.Forms.Button();
             this.dgCurrentScores = new System.Windows.Forms.DataGridView();
+            this.AttemptNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Scores = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.miDelete = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,8 +60,9 @@
             this.txtAverage = new System.Windows.Forms.TextBox();
             this.gbxRecord = new System.Windows.Forms.GroupBox();
             this.txtRecord = new System.Windows.Forms.TextBox();
-            this.btnReset = new System.Windows.Forms.Button();
+            this.btnEndInning = new System.Windows.Forms.Button();
             this.chtAveragesScores = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.gbxCurrentScore.SuspendLayout();
             this.gbxCurrentBest.SuspendLayout();
             this.gbxStatistics.SuspendLayout();
@@ -76,7 +79,7 @@
             this.gbxCurrentScore.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbxCurrentScore.Location = new System.Drawing.Point(12, 12);
             this.gbxCurrentScore.Name = "gbxCurrentScore";
-            this.gbxCurrentScore.Size = new System.Drawing.Size(135, 50);
+            this.gbxCurrentScore.Size = new System.Drawing.Size(135, 84);
             this.gbxCurrentScore.TabIndex = 0;
             this.gbxCurrentScore.TabStop = false;
             this.gbxCurrentScore.Text = "Current Score";
@@ -87,18 +90,22 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCurrentScore.Location = new System.Drawing.Point(6, 19);
             this.txtCurrentScore.Name = "txtCurrentScore";
-            this.txtCurrentScore.Size = new System.Drawing.Size(116, 26);
+            this.txtCurrentScore.Size = new System.Drawing.Size(123, 26);
             this.txtCurrentScore.TabIndex = 0;
             this.txtCurrentScore.Text = "0";
+            this.toolTip1.SetToolTip(this.txtCurrentScore, "Enter your score at the end of each rack or when you miss.\r\nPressing the ENTER ke" +
+        "y will automatically update the \"Current Best\" and \"Record\".");
             this.txtCurrentScore.TextChanged += new System.EventHandler(this.TxtCurrentScoreTextChanged);
             this.txtCurrentScore.Enter += new System.EventHandler(this.TxtCurrentScoreEnter);
             this.txtCurrentScore.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtCurrentScoreKeyPress);
+            this.txtCurrentScore.MouseEnter += new System.EventHandler(this.TxtCurrentScoreEnter);
+            this.txtCurrentScore.MouseLeave += new System.EventHandler(this.ControlMouseLeave);
             // 
             // gbxCurrentBest
             // 
             this.gbxCurrentBest.Controls.Add(this.txtCurrentBest);
             this.gbxCurrentBest.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gbxCurrentBest.Location = new System.Drawing.Point(12, 68);
+            this.gbxCurrentBest.Location = new System.Drawing.Point(12, 102);
             this.gbxCurrentBest.Name = "gbxCurrentBest";
             this.gbxCurrentBest.Size = new System.Drawing.Size(135, 50);
             this.gbxCurrentBest.TabIndex = 1;
@@ -111,7 +118,8 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCurrentBest.Location = new System.Drawing.Point(6, 19);
             this.txtCurrentBest.Name = "txtCurrentBest";
-            this.txtCurrentBest.Size = new System.Drawing.Size(116, 26);
+            this.txtCurrentBest.ReadOnly = true;
+            this.txtCurrentBest.Size = new System.Drawing.Size(123, 26);
             this.txtCurrentBest.TabIndex = 0;
             this.txtCurrentBest.TabStop = false;
             this.txtCurrentBest.Text = "0";
@@ -122,6 +130,7 @@
             this.gbxStatistics.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbxStatistics.Controls.Add(this.btnClear);
             this.gbxStatistics.Controls.Add(this.dgCurrentScores);
             this.gbxStatistics.Controls.Add(this.dgRackStatistics);
             this.gbxStatistics.Controls.Add(this.lblAverage);
@@ -132,12 +141,27 @@
             this.gbxStatistics.Controls.Add(this.txtTotalAttempts);
             this.gbxStatistics.Controls.Add(this.lblTotalAttemps);
             this.gbxStatistics.Controls.Add(this.txtAverage);
-            this.gbxStatistics.Location = new System.Drawing.Point(12, 180);
+            this.gbxStatistics.Location = new System.Drawing.Point(12, 214);
             this.gbxStatistics.Name = "gbxStatistics";
-            this.gbxStatistics.Size = new System.Drawing.Size(554, 298);
+            this.gbxStatistics.Size = new System.Drawing.Size(554, 296);
             this.gbxStatistics.TabIndex = 2;
             this.gbxStatistics.TabStop = false;
             this.gbxStatistics.Text = "Statistics";
+            // 
+            // btnClear
+            // 
+            this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClear.Location = new System.Drawing.Point(6, 267);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(535, 23);
+            this.btnClear.TabIndex = 6;
+            this.btnClear.Text = "Clear Scores && Statistics";
+            this.toolTip1.SetToolTip(this.btnClear, "Click to clear scores and statistics");
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.BtnClearClick);
+            this.btnClear.MouseEnter += new System.EventHandler(this.ControlMouseEnter);
+            this.btnClear.MouseLeave += new System.EventHandler(this.ControlMouseLeave);
             // 
             // dgCurrentScores
             // 
@@ -150,22 +174,35 @@
             this.dgCurrentScores.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgCurrentScores.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgCurrentScores.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.AttemptNumber,
             this.Scores});
             this.dgCurrentScores.ContextMenuStrip = this.contextMenuStrip;
             this.dgCurrentScores.Location = new System.Drawing.Point(6, 17);
             this.dgCurrentScores.MultiSelect = false;
             this.dgCurrentScores.Name = "dgCurrentScores";
             this.dgCurrentScores.RowHeadersVisible = false;
+            this.dgCurrentScores.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.dgCurrentScores.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgCurrentScores.Size = new System.Drawing.Size(84, 173);
+            this.dgCurrentScores.Size = new System.Drawing.Size(129, 140);
             this.dgCurrentScores.TabIndex = 13;
             this.dgCurrentScores.TabStop = false;
+            this.dgCurrentScores.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DgCurrentScoresMouseDown);
+            // 
+            // AttemptNumber
+            // 
+            this.AttemptNumber.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.AttemptNumber.DataPropertyName = "AttemptNumber";
+            this.AttemptNumber.HeaderText = "#";
+            this.AttemptNumber.MaxInputLength = 3;
+            this.AttemptNumber.MinimumWidth = 28;
+            this.AttemptNumber.Name = "AttemptNumber";
+            this.AttemptNumber.ReadOnly = true;
+            this.AttemptNumber.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             // 
             // Scores
             // 
             this.Scores.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.Scores.DataPropertyName = "Score";
-            this.Scores.Frozen = true;
             this.Scores.HeaderText = "Scores";
             this.Scores.MaxInputLength = 3;
             this.Scores.Name = "Scores";
@@ -199,12 +236,13 @@
             this.colRackNumber,
             this.colRackCount,
             this.colRackScores});
-            this.dgRackStatistics.Location = new System.Drawing.Point(96, 17);
+            this.dgRackStatistics.Location = new System.Drawing.Point(141, 17);
             this.dgRackStatistics.MultiSelect = false;
             this.dgRackStatistics.Name = "dgRackStatistics";
+            this.dgRackStatistics.ReadOnly = true;
             this.dgRackStatistics.RowHeadersVisible = false;
             this.dgRackStatistics.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgRackStatistics.Size = new System.Drawing.Size(445, 171);
+            this.dgRackStatistics.Size = new System.Drawing.Size(400, 140);
             this.dgRackStatistics.TabIndex = 12;
             this.dgRackStatistics.TabStop = false;
             // 
@@ -241,62 +279,62 @@
             // lblAverage
             // 
             this.lblAverage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblAverage.Location = new System.Drawing.Point(6, 272);
+            this.lblAverage.Location = new System.Drawing.Point(6, 241);
             this.lblAverage.Name = "lblAverage";
             this.lblAverage.Size = new System.Drawing.Size(84, 20);
             this.lblAverage.TabIndex = 11;
             this.lblAverage.Text = "Average:";
-            this.lblAverage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblAverage.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtTotalBalls
             // 
             this.txtTotalBalls.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTotalBalls.Location = new System.Drawing.Point(96, 246);
+            this.txtTotalBalls.Location = new System.Drawing.Point(96, 215);
             this.txtTotalBalls.Name = "txtTotalBalls";
             this.txtTotalBalls.ReadOnly = true;
             this.txtTotalBalls.Size = new System.Drawing.Size(445, 20);
             this.txtTotalBalls.TabIndex = 10;
             this.txtTotalBalls.TabStop = false;
-            this.txtTotalBalls.Text = "0";
+            this.txtTotalBalls.Text = "0 of 0 (0%)";
             // 
             // label1
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.Location = new System.Drawing.Point(6, 245);
+            this.label1.Location = new System.Drawing.Point(6, 214);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(84, 20);
             this.label1.TabIndex = 9;
             this.label1.Text = "Total Balls:";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtTotalRacks
             // 
             this.txtTotalRacks.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTotalRacks.Location = new System.Drawing.Point(96, 220);
+            this.txtTotalRacks.Location = new System.Drawing.Point(96, 189);
             this.txtTotalRacks.Name = "txtTotalRacks";
             this.txtTotalRacks.ReadOnly = true;
             this.txtTotalRacks.Size = new System.Drawing.Size(445, 20);
             this.txtTotalRacks.TabIndex = 8;
             this.txtTotalRacks.TabStop = false;
-            this.txtTotalRacks.Text = "0";
+            this.txtTotalRacks.Text = "0 of 0 (0%)";
             // 
             // lblTotalRacks
             // 
             this.lblTotalRacks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblTotalRacks.Location = new System.Drawing.Point(6, 219);
+            this.lblTotalRacks.Location = new System.Drawing.Point(6, 188);
             this.lblTotalRacks.Name = "lblTotalRacks";
             this.lblTotalRacks.Size = new System.Drawing.Size(84, 20);
             this.lblTotalRacks.TabIndex = 7;
             this.lblTotalRacks.Text = "Total Racks:";
-            this.lblTotalRacks.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblTotalRacks.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtTotalAttempts
             // 
             this.txtTotalAttempts.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTotalAttempts.Location = new System.Drawing.Point(96, 194);
+            this.txtTotalAttempts.Location = new System.Drawing.Point(96, 163);
             this.txtTotalAttempts.Name = "txtTotalAttempts";
             this.txtTotalAttempts.ReadOnly = true;
             this.txtTotalAttempts.Size = new System.Drawing.Size(445, 20);
@@ -307,18 +345,18 @@
             // lblTotalAttemps
             // 
             this.lblTotalAttemps.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblTotalAttemps.Location = new System.Drawing.Point(6, 193);
+            this.lblTotalAttemps.Location = new System.Drawing.Point(6, 162);
             this.lblTotalAttemps.Name = "lblTotalAttemps";
             this.lblTotalAttemps.Size = new System.Drawing.Size(84, 20);
             this.lblTotalAttemps.TabIndex = 5;
             this.lblTotalAttemps.Text = "Total Attempts:";
-            this.lblTotalAttemps.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblTotalAttemps.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtAverage
             // 
             this.txtAverage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtAverage.Location = new System.Drawing.Point(96, 272);
+            this.txtAverage.Location = new System.Drawing.Point(96, 241);
             this.txtAverage.Name = "txtAverage";
             this.txtAverage.ReadOnly = true;
             this.txtAverage.Size = new System.Drawing.Size(445, 20);
@@ -330,7 +368,7 @@
             // 
             this.gbxRecord.Controls.Add(this.txtRecord);
             this.gbxRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gbxRecord.Location = new System.Drawing.Point(12, 124);
+            this.gbxRecord.Location = new System.Drawing.Point(12, 158);
             this.gbxRecord.Name = "gbxRecord";
             this.gbxRecord.Size = new System.Drawing.Size(135, 50);
             this.gbxRecord.TabIndex = 3;
@@ -343,23 +381,28 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtRecord.Location = new System.Drawing.Point(6, 19);
             this.txtRecord.Name = "txtRecord";
-            this.txtRecord.Size = new System.Drawing.Size(116, 26);
+            this.txtRecord.ReadOnly = true;
+            this.txtRecord.Size = new System.Drawing.Size(123, 26);
             this.txtRecord.TabIndex = 0;
             this.txtRecord.TabStop = false;
             this.txtRecord.Text = "0";
             this.txtRecord.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtRecordKeyPress);
             // 
-            // btnReset
+            // btnEndInning
             // 
-            this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.btnEndInning.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReset.Location = new System.Drawing.Point(12, 484);
-            this.btnReset.Name = "btnReset";
-            this.btnReset.Size = new System.Drawing.Size(554, 23);
-            this.btnReset.TabIndex = 4;
-            this.btnReset.Text = "Reset";
-            this.btnReset.UseVisualStyleBackColor = true;
-            this.btnReset.Click += new System.EventHandler(this.BtnResetClick);
+            this.btnEndInning.Location = new System.Drawing.Point(18, 63);
+            this.btnEndInning.Name = "btnEndInning";
+            this.btnEndInning.Size = new System.Drawing.Size(123, 23);
+            this.btnEndInning.TabIndex = 4;
+            this.btnEndInning.Text = "End Inning";
+            this.toolTip1.SetToolTip(this.btnEndInning, "Click when you miss.\r\nThe statistics will be calculated from the current score an" +
+        "d the current score will be reset to 0.");
+            this.btnEndInning.UseVisualStyleBackColor = true;
+            this.btnEndInning.Click += new System.EventHandler(this.BtnEndInningClick);
+            this.btnEndInning.MouseEnter += new System.EventHandler(this.ControlMouseEnter);
+            this.btnEndInning.MouseLeave += new System.EventHandler(this.ControlMouseLeave);
             // 
             // chtAveragesScores
             // 
@@ -421,7 +464,7 @@
             series2.Name = "Average";
             this.chtAveragesScores.Series.Add(series1);
             this.chtAveragesScores.Series.Add(series2);
-            this.chtAveragesScores.Size = new System.Drawing.Size(413, 162);
+            this.chtAveragesScores.Size = new System.Drawing.Size(413, 196);
             this.chtAveragesScores.TabIndex = 5;
             this.chtAveragesScores.Text = "chart1";
             title1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -434,9 +477,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(578, 515);
+            this.ClientSize = new System.Drawing.Size(578, 522);
             this.Controls.Add(this.chtAveragesScores);
-            this.Controls.Add(this.btnReset);
+            this.Controls.Add(this.btnEndInning);
             this.Controls.Add(this.gbxRecord);
             this.Controls.Add(this.gbxStatistics);
             this.Controls.Add(this.gbxCurrentBest);
@@ -449,6 +492,7 @@
             this.Name = "FrmStraightPoolScoreKeeper";
             this.Text = "High Run Straight Pool Score Keeper";
             this.TopMost = true;
+            this.Load += new System.EventHandler(this.FrmStraightPoolScoreKeeperLoad);
             this.gbxCurrentScore.ResumeLayout(false);
             this.gbxCurrentScore.PerformLayout();
             this.gbxCurrentBest.ResumeLayout(false);
@@ -475,7 +519,7 @@
         private System.Windows.Forms.TextBox txtAverage;
         private System.Windows.Forms.GroupBox gbxRecord;
         private System.Windows.Forms.TextBox txtRecord;
-        private System.Windows.Forms.Button btnReset;
+        private System.Windows.Forms.Button btnEndInning;
         private System.Windows.Forms.Label lblAverage;
         private System.Windows.Forms.TextBox txtTotalBalls;
         private System.Windows.Forms.Label label1;
@@ -487,11 +531,14 @@
         private System.Windows.Forms.ToolStripMenuItem miDelete;
         private System.Windows.Forms.DataGridView dgRackStatistics;
         private System.Windows.Forms.DataGridView dgCurrentScores;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Scores;
         private System.Windows.Forms.DataVisualization.Charting.Chart chtAveragesScores;
         private System.Windows.Forms.DataGridViewTextBoxColumn colRackNumber;
         private System.Windows.Forms.DataGridViewTextBoxColumn colRackCount;
         private System.Windows.Forms.DataGridViewTextBoxColumn colRackScores;
+        private System.Windows.Forms.DataGridViewTextBoxColumn AttemptNumber;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Scores;
+        private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
 

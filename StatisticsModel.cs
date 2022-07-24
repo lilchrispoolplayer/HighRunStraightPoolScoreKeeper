@@ -13,6 +13,7 @@ namespace StraightPoolScoreKeeper
         private const string CURRENT_BEST_TXT = "CurrentBest.txt";
         private const string RECORD_TXT = "Record.txt";
         private const string AVERAGE_TXT = "Average.txt";
+        private const string SCORES_TXT = "Scores.txt";
 
         // Fields
         private int currentScore;
@@ -39,9 +40,9 @@ namespace StraightPoolScoreKeeper
         public StatisticsModel()
         {
             CreateFiles();
+            LoadScores();
             LoadField(ref record, RECORD_TXT);
             SaveCurrentScore(0);
-            CalculateStatistics(true);
         }
 
         /// <summary>
@@ -176,18 +177,22 @@ namespace StraightPoolScoreKeeper
         /// Calculates the statics of all attempts
         /// </summary>
         /// <param name="deleting">Flag if deleting a current score</param>
-        public void CalculateStatistics(bool deleting)
+        public void CalculateStatistics(bool deleting, bool loading)
         {
-            if (!deleting)
+            if (!deleting && !loading)
             {
-                currentScores.Add(new ScoreModel { Score = currentScore });
+                currentScores.Add(new ScoreModel
+                {
+                    AttemptNumber = currentScores.Count + 1,
+                    Score = currentScore
+                });
+                SaveScores();
             }
 
             CalculateRackStatistics();
-            CalculateAndSaveAverage();
-            if (!deleting)
+            if (!deleting && !loading)
             {
-                averagesList.Add(average);
+                CalculateAndSaveAverage();
             }
 
             totalBalls = currentScores.Sum(sm => sm.Score);
@@ -207,7 +212,6 @@ namespace StraightPoolScoreKeeper
         /// <param name="scoreIndex">Index location of the score to delete</param>
         public void DeleteCurrentScore(int scoreIndex)
         {
-            int score = currentScores[scoreIndex].Score;
             currentScores.RemoveAt(scoreIndex);
             averagesList.RemoveAt(scoreIndex);
 
@@ -217,6 +221,12 @@ namespace StraightPoolScoreKeeper
             {
                 currentBest = currentScores.OrderByDescending(s => s.Score).First().Score;
                 SaveCurrentBest(currentBest, false);
+            }
+
+            SaveScores();
+            for (int i = scoreIndex; i < currentScores.Count; i++)
+            {
+                currentScores[i].AttemptNumber = i + 1;
             }
         }
 
@@ -244,6 +254,13 @@ namespace StraightPoolScoreKeeper
             SaveField(record, RECORD_TXT);
         }
 
+        public void Clear()
+        {
+            currentScores.Clear();
+            averagesList.Clear();
+            SaveScores();
+        }
+
         /// <summary>
         /// Saves the current average to a file
         /// </summary>
@@ -257,6 +274,7 @@ namespace StraightPoolScoreKeeper
             }
 
             average = currentScores.Sum(sm => sm.Score) / currentScores.Count;
+            averagesList.Add(average);
             SaveField(average, AVERAGE_TXT);
         }
 
@@ -299,6 +317,36 @@ namespace StraightPoolScoreKeeper
             using (StreamWriter writer = new StreamWriter(file))
             {
                 writer.Write(field);
+            }
+        }
+
+        /// <summary>
+        /// Saves all scores to a file
+        /// </summary>
+        private void SaveScores()
+        {
+            File.WriteAllLines(SCORES_TXT, currentScores.Select(s => s.Score.ToString()));
+        }
+
+        /// <summary>
+        /// Loads all scores from a file
+        /// </summary>
+        private void LoadScores()
+        {
+            if (!File.Exists(SCORES_TXT))
+            {
+                return;
+            }
+
+            string[] scores = File.ReadAllLines(SCORES_TXT);
+            foreach (string score in scores)
+            {
+                currentScores.Add(new ScoreModel
+                {
+                    AttemptNumber = currentScores.Count + 1,
+                    Score = Convert.ToInt32(score)
+                });
+                CalculateAndSaveAverage();
             }
         }
 

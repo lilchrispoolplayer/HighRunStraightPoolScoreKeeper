@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -14,25 +15,44 @@ namespace StraightPoolScoreKeeper
         {
             InitializeComponent();
 
+            if (statisticsModel.GetCurrentScores().Count > 0)
+            {
+                CalculateStatistics(false, true);
+            }
             txtCurrentBest.Text = statisticsModel.GetCurrentBest().ToString();
             txtRecord.Text = statisticsModel.GetRecord().ToString();
             txtAverage.Text = statisticsModel.GetAverage().ToString();
+        }
+
+        private void FrmStraightPoolScoreKeeperLoad(object sender, EventArgs e)
+        {
+            dgRackStatistics.DefaultCellStyle.SelectionBackColor = dgRackStatistics.DefaultCellStyle.BackColor;
+            dgRackStatistics.DefaultCellStyle.SelectionForeColor = dgRackStatistics.DefaultCellStyle.ForeColor;
+
+            if (dgCurrentScores.RowCount > 0)
+            {
+                dgCurrentScores.Rows[dgCurrentScores.Rows.Count - 1].Selected = true;
+            }
         }
 
         private void TxtCurrentScoreEnter(object sender, EventArgs e)
         {
             txtCurrentScore.Focus();
             txtCurrentScore.SelectAll();
+
+            ControlMouseEnter(sender, e);
         }
 
         private void TxtCurrentScoreKeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == (char)13)
+            if (e.KeyChar == (char)Keys.Enter)
             {
                 SaveCurrentScore(Convert.ToInt32(txtCurrentScore.Text));
                 txtCurrentScore.SelectAll();
+                return;
             }
-            else if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
+
+            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
             {
                 e.Handled = true;
             }
@@ -45,6 +65,14 @@ namespace StraightPoolScoreKeeper
                 txtCurrentScore.Text = "0";
                 txtCurrentScore.SelectAll();
             }
+        }
+
+        private void BtnEndInningClick(object sender, EventArgs e)
+        {
+            SaveCurrentScore(Convert.ToInt32(txtCurrentScore.Text));
+            CalculateStatistics(false, false);
+
+            SaveCurrentScore(0);
         }
 
         private void TxtCurrentBestKeyPress(object sender, KeyPressEventArgs e)
@@ -71,12 +99,14 @@ namespace StraightPoolScoreKeeper
             }
         }
 
-        private void BtnResetClick(object sender, EventArgs e)
+        private void DgCurrentScoresMouseDown(object sender, MouseEventArgs e)
         {
-            SaveCurrentScore(Convert.ToInt32(txtCurrentScore.Text));
-            CalculateStatistics(false);
-
-            SaveCurrentScore(0);
+            if (e.Button == MouseButtons.Right)
+            {
+                var hti = dgCurrentScores.HitTest(e.X, e.Y);
+                dgCurrentScores.ClearSelection();
+                dgCurrentScores.Rows[hti.RowIndex].Selected = true;
+            }
         }
 
         private void MiDeleteClick(object sender, EventArgs e)
@@ -85,7 +115,44 @@ namespace StraightPoolScoreKeeper
                 return;
 
             statisticsModel.DeleteCurrentScore(dgCurrentScores.SelectedRows[0].Index);
-            CalculateStatistics(true);
+            CalculateStatistics(true, false);
+        }
+
+        private void BtnClearClick(object sender, EventArgs e)
+        {
+            using (new CenterWinDialog(this))
+            {
+                if (MessageBox.Show(this, "Are you sure you want to clear scores?", "Question",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    return;
+                }
+                statisticsModel.Clear();
+                CalculateStatistics(true, false);
+                SaveCurrentScore(0);
+            }
+        }
+
+        private void ControlMouseEnter(object sender, EventArgs e)
+        {
+            Control currentControl = ((Control)sender);
+            Point p = ((Control)sender).PointToClient(Cursor.Position);
+            p.X += 30;
+            p.Y -= 20;
+            
+            toolTip1.Show(toolTip1.GetToolTip(currentControl), currentControl, p);
+        }
+
+        private void ControlMouseLeave(object sender, EventArgs e)
+        {
+            if (sender is TextBox currentTextBox)
+            {
+                toolTip1.Hide(currentTextBox);
+            }
+            else if (sender is Button currentButton)
+            {
+                toolTip1.Hide(currentButton);
+            }
         }
 
         private void SaveCurrentScore(int score)
@@ -100,9 +167,9 @@ namespace StraightPoolScoreKeeper
             txtCurrentScore.SelectAll();
         }
 
-        private void CalculateStatistics(bool deleting)
+        private void CalculateStatistics(bool deleting, bool loading)
         {
-            statisticsModel.CalculateStatistics(deleting);
+            statisticsModel.CalculateStatistics(deleting, loading);
 
             txtCurrentBest.Text = statisticsModel.GetCurrentBest().ToString();
             txtTotalAttempts.Text = statisticsModel.GetTotalAttempts().ToString();
@@ -125,10 +192,10 @@ namespace StraightPoolScoreKeeper
             
             dgRackStatistics.DataSource = statisticsModel.GetRackStatistcs().OrderBy(stat => stat.RackNumber).ToList();
 
-            PlotAveragesAndScoresOnLineChart();
+            UpdateLineChart();
         }
 
-        private void PlotAveragesAndScoresOnLineChart()
+        private void UpdateLineChart()
         {
             if (statisticsModel.GetCurrentScores().Count == 0)
             {

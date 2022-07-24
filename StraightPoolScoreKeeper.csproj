@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CenterWinDialog.cs" />
     <Compile Include="RackStatistics.cs" />
     <Compile Include="ScoreModel.cs" />
     <Compile Include="StatisticsModel.cs" />
