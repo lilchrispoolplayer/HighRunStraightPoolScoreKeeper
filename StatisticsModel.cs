@@ -40,7 +40,6 @@ namespace StraightPoolScoreKeeper
         public StatisticsModel()
         {
             CreateFiles();
-            LoadScores();
             LoadField(ref record, RECORD_TXT);
             SaveCurrentScore(0);
         }
@@ -169,8 +168,8 @@ namespace StraightPoolScoreKeeper
             currentScore = score;
 
             SaveField(currentScore, CURRENT_SCORE_TXT);
-            SaveCurrentBest(currentScore, false);
-            SaveRecord(currentBest, false);
+            SaveCurrentBest(currentScore);
+            SaveRecord(currentBest);
         }
 
         /// <summary>
@@ -220,7 +219,7 @@ namespace StraightPoolScoreKeeper
             else
             {
                 currentBest = currentScores.OrderByDescending(s => s.Score).First().Score;
-                SaveCurrentBest(currentBest, false);
+                SaveCurrentBest(currentBest);
             }
 
             SaveScores();
@@ -233,9 +232,9 @@ namespace StraightPoolScoreKeeper
         /// <summary>
         /// Saves the current best score to a file
         /// </summary>
-        public void SaveCurrentBest(int score, bool overwrite)
+        public void SaveCurrentBest(int score)
         {
-            if (!overwrite && score < currentBest)
+            if (score < currentBest)
                 return;
 
             currentBest = score;
@@ -245,13 +244,36 @@ namespace StraightPoolScoreKeeper
         /// <summary>
         /// Saves the current record to a file
         /// </summary>
-        public void SaveRecord(int score, bool overwrite)
+        public void SaveRecord(int score)
         {
-            if (!overwrite && score < record)
+            if (score < record)
                 return;
 
             record = score;
             SaveField(record, RECORD_TXT);
+        }
+
+        /// <summary>
+        /// Loads all scores from a file
+        /// </summary>
+        public void LoadScores()
+        {
+            if (!File.Exists(SCORES_TXT))
+            {
+                return;
+            }
+
+            IEnumerable<int> scores = File.ReadAllLines(SCORES_TXT).Select(s => Convert.ToInt32(s));
+            foreach (int score in scores)
+            {
+                currentScores.Add(new ScoreModel
+                {
+                    AttemptNumber = currentScores.Count + 1,
+                    Score = score
+                });
+                SaveCurrentBest(score);
+                CalculateAndSaveAverage();
+            }
         }
 
         public void Clear()
@@ -261,6 +283,7 @@ namespace StraightPoolScoreKeeper
             average = 0;
             currentBest = 0;
             SaveScores();
+            CalculateAndSaveAverage();
         }
 
         /// <summary>
@@ -328,28 +351,6 @@ namespace StraightPoolScoreKeeper
         private void SaveScores()
         {
             File.WriteAllLines(SCORES_TXT, currentScores.Select(s => s.Score.ToString()));
-        }
-
-        /// <summary>
-        /// Loads all scores from a file
-        /// </summary>
-        private void LoadScores()
-        {
-            if (!File.Exists(SCORES_TXT))
-            {
-                return;
-            }
-
-            string[] scores = File.ReadAllLines(SCORES_TXT);
-            foreach (string score in scores)
-            {
-                currentScores.Add(new ScoreModel
-                {
-                    AttemptNumber = currentScores.Count + 1,
-                    Score = Convert.ToInt32(score)
-                });
-                CalculateAndSaveAverage();
-            }
         }
 
         /// <summary>

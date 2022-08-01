@@ -14,25 +14,25 @@ namespace StraightPoolScoreKeeper
         public FrmStraightPoolScoreKeeper()
         {
             InitializeComponent();
-
-            if (statisticsModel.GetCurrentScores().Count > 0)
-            {
-                CalculateStatistics(false, true);
-            }
-            txtCurrentBest.Text = statisticsModel.GetCurrentBest().ToString();
-            txtRecord.Text = statisticsModel.GetRecord().ToString();
-            txtAverage.Text = statisticsModel.GetAverage().ToString();
         }
 
         private void FrmStraightPoolScoreKeeperLoad(object sender, EventArgs e)
         {
-            dgRackStatistics.DefaultCellStyle.SelectionBackColor = dgRackStatistics.DefaultCellStyle.BackColor;
-            dgRackStatistics.DefaultCellStyle.SelectionForeColor = dgRackStatistics.DefaultCellStyle.ForeColor;
-
-            if (dgCurrentScores.RowCount > 0)
+            statisticsModel.LoadScores();
+            if (statisticsModel.GetCurrentScores().Count > 0)
             {
+                CalculateStatistics(false, true);
+
+                dgCurrentScores.FirstDisplayedScrollingRowIndex = dgCurrentScores.Rows.Count - 1;
                 dgCurrentScores.Rows[dgCurrentScores.Rows.Count - 1].Selected = true;
             }
+
+            txtCurrentBest.Text = statisticsModel.GetCurrentBest().ToString();
+            txtRecord.Text = statisticsModel.GetRecord().ToString();
+            txtAverage.Text = statisticsModel.GetAverage().ToString();
+
+            dgRackStatistics.DefaultCellStyle.SelectionBackColor = dgRackStatistics.DefaultCellStyle.BackColor;
+            dgRackStatistics.DefaultCellStyle.SelectionForeColor = dgRackStatistics.DefaultCellStyle.ForeColor;
         }
 
         private void TxtCurrentScoreEnter(object sender, EventArgs e)
@@ -73,30 +73,6 @@ namespace StraightPoolScoreKeeper
             CalculateStatistics(false, false);
 
             SaveCurrentScore(0);
-        }
-
-        private void TxtCurrentBestKeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == (char)13)
-            {
-                statisticsModel.SaveCurrentBest(Convert.ToInt32(txtCurrentBest.Text), true);
-            }
-            else if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void TxtRecordKeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == (char)13)
-            {
-                statisticsModel.SaveRecord(Convert.ToInt32(txtRecord.Text), true);
-            }
-            else if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
-            {
-                e.Handled = true;
-            }
         }
 
         private void DgCurrentScoresMouseDown(object sender, MouseEventArgs e)

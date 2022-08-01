@@ -123,7 +123,6 @@
             this.txtCurrentBest.TabIndex = 0;
             this.txtCurrentBest.TabStop = false;
             this.txtCurrentBest.Text = "0";
-            this.txtCurrentBest.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtCurrentBestKeyPress);
             // 
             // gbxStatistics
             // 
@@ -386,7 +385,6 @@
             this.txtRecord.TabIndex = 0;
             this.txtRecord.TabStop = false;
             this.txtRecord.Text = "0";
-            this.txtRecord.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtRecordKeyPress);
             // 
             // btnEndInning
             // 
