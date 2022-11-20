@@ -51,6 +51,10 @@ namespace StraightPoolScoreKeeper
                 txtCurrentScore.SelectAll();
                 return;
             }
+            else if (e.KeyChar == (char)Keys.E || e.KeyChar == 'e')
+            {
+                btnEndInning.PerformClick();
+            }
 
             if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
             {

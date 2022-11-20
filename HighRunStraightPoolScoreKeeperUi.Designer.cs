@@ -94,7 +94,8 @@
             this.txtCurrentScore.TabIndex = 0;
             this.txtCurrentScore.Text = "0";
             this.toolTip1.SetToolTip(this.txtCurrentScore, "Enter your score at the end of each rack or when you miss.\r\nPressing the ENTER ke" +
-        "y will automatically update the \"Current Best\" and \"Record\".");
+        "y will automatically update the \"Current Best\" and \"Record\".\r\nPressing \'E\' will " +
+        "automatically end the current inning");
             this.txtCurrentScore.TextChanged += new System.EventHandler(this.TxtCurrentScoreTextChanged);
             this.txtCurrentScore.Enter += new System.EventHandler(this.TxtCurrentScoreEnter);
             this.txtCurrentScore.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtCurrentScoreKeyPress);
