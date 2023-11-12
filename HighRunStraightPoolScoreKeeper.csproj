@@ -66,7 +66,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CenterWinDialog.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="HighRunStraightPoolReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HighRunStraightPoolReport.Designer.cs">
+      <DependentUpon>HighRunStraightPoolReport.cs</DependentUpon>
+    </Compile>
     <Compile Include="RackStatistics.cs" />
+    <Compile Include="ReportModel.cs" />
     <Compile Include="ScoreModel.cs" />
     <Compile Include="StatisticsModel.cs" />
     <Compile Include="HighRunStraightPoolScoreKeeperUi.cs">
@@ -77,6 +85,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="HighRunStraightPoolReport.resx">
+      <DependentUpon>HighRunStraightPoolReport.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="HighRunStraightPoolScoreKeeperUi.resx">
       <DependentUpon>HighRunStraightPoolScoreKeeperUi.cs</DependentUpon>
     </EmbeddedResource>
@@ -104,6 +115,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Settings.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Images\straight_pool_rack.png" />
     <Content Include="straight_pool_rack.ico" />
   </ItemGroup>

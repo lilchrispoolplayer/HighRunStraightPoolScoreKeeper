@@ -1,22 +1,29 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace StraightPoolScoreKeeper
+namespace HighRunStraightPoolScoreKeeper
 {
     public partial class FrmStraightPoolScoreKeeper : Form
     {
         private StatisticsModel statisticsModel = new StatisticsModel();
-        private const int SCORE_SERIES = 0;
-        private const int AVERAGE_SERIES = 1;
 
+        /// <summary>
+        /// Default Constructor
+        /// </summary>
         public FrmStraightPoolScoreKeeper()
         {
             InitializeComponent();
         }
 
-        private void FrmStraightPoolScoreKeeperLoad(object sender, EventArgs e)
+        /// <summary>
+        /// Loads the last known current scores and settings
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FrmStraightPoolScoreKeeperShown(object sender, EventArgs e)
         {
             statisticsModel.LoadScores();
             if (statisticsModel.GetCurrentScores().Count > 0)
@@ -33,8 +40,65 @@ namespace StraightPoolScoreKeeper
 
             dgRackStatistics.DefaultCellStyle.SelectionBackColor = dgRackStatistics.DefaultCellStyle.BackColor;
             dgRackStatistics.DefaultCellStyle.SelectionForeColor = dgRackStatistics.DefaultCellStyle.ForeColor;
+
+            LoadSettingsIni();
         }
 
+        /// <summary>
+        /// Saves the settings of the UI
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FrmStraightPoolScoreKeeperFormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveSettingsIni();
+        }
+
+        /// <summary>
+        /// Saved the current session of scores for a report
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SaveDailyReportToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            string currentLine = string.Format("{0}|{1}", DateTime.Now.ToShortDateString(), String.Join(",", statisticsModel.GetCurrentScores().Select(s => s.Score)));
+            string lastLine = File.ReadLines(Constants.SAVED_SCORES_CSV).Last();
+
+            DialogResult dr = DialogResult.Yes;
+            if (lastLine.Substring(0, lastLine.IndexOf("|")) == currentLine.Substring(0, lastLine.IndexOf("|")))
+            {
+                using (new CenterWinDialog(this))
+                {
+                    dr = MessageBox.Show("You've already saved scores today.  Save Again?", "Question",
+                    MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                }
+            }
+
+            if (dr == DialogResult.Yes)
+            {
+                using (StreamWriter sw = new StreamWriter(Constants.SAVED_SCORES_CSV, true))
+                {
+                    sw.WriteLine(currentLine);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Views all saved scores
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ViewReportToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            HighRunStraightPoolReport report = new HighRunStraightPoolReport();
+            report.ShowDialog();
+        }
+
+        /// <summary>
+        /// Selects all of the text in the current score text box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TxtCurrentScoreEnter(object sender, EventArgs e)
         {
             txtCurrentScore.Focus();
@@ -43,6 +107,11 @@ namespace StraightPoolScoreKeeper
             ControlMouseEnter(sender, e);
         }
 
+        /// <summary>
+        /// Reacts to key presses for the current score text box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TxtCurrentScoreKeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)Keys.Enter)
@@ -62,6 +131,11 @@ namespace StraightPoolScoreKeeper
             }
         }
 
+        /// <summary>
+        /// Automatically sets the current score textbox to zero if blank
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TxtCurrentScoreTextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(txtCurrentScore.Text))
@@ -71,6 +145,11 @@ namespace StraightPoolScoreKeeper
             }
         }
 
+        /// <summary>
+        /// Ends the current inning by saving the score and calculating statistics
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnEndInningClick(object sender, EventArgs e)
         {
             SaveCurrentScore(Convert.ToInt32(txtCurrentScore.Text));
@@ -79,6 +158,11 @@ namespace StraightPoolScoreKeeper
             SaveCurrentScore(0);
         }
 
+        /// <summary>
+        /// Highlights the selected score row
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DgCurrentScoresMouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -89,6 +173,11 @@ namespace StraightPoolScoreKeeper
             }
         }
 
+        /// <summary>
+        /// Deletes the highlighted score row
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MiDeleteClick(object sender, EventArgs e)
         {
             if (dgCurrentScores.SelectedRows.Count == 0)
@@ -98,6 +187,11 @@ namespace StraightPoolScoreKeeper
             CalculateStatistics(true, false);
         }
 
+        /// <summary>
+        /// Clears all scores and statistics
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnClearClick(object sender, EventArgs e)
         {
             using (new CenterWinDialog(this))
@@ -113,6 +207,11 @@ namespace StraightPoolScoreKeeper
             }
         }
 
+        /// <summary>
+        /// Shows the tool tip of the mouse entered control
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ControlMouseEnter(object sender, EventArgs e)
         {
             Control currentControl = ((Control)sender);
@@ -123,6 +222,11 @@ namespace StraightPoolScoreKeeper
             toolTip1.Show(toolTip1.GetToolTip(currentControl), currentControl, p);
         }
 
+        /// <summary>
+        /// Hides the tool tip of the mouse leaved control
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ControlMouseLeave(object sender, EventArgs e)
         {
             if (sender is TextBox currentTextBox)
@@ -135,6 +239,10 @@ namespace StraightPoolScoreKeeper
             }
         }
 
+        /// <summary>
+        /// Saves the current score and calculates statistics
+        /// </summary>
+        /// <param name="score"></param>
         private void SaveCurrentScore(int score)
         {
             statisticsModel.SaveCurrentScore(score);
@@ -147,6 +255,11 @@ namespace StraightPoolScoreKeeper
             txtCurrentScore.SelectAll();
         }
 
+        /// <summary>
+        /// Calculates the statistics of the scores
+        /// </summary>
+        /// <param name="deleting"></param>
+        /// <param name="loading"></param>
         private void CalculateStatistics(bool deleting, bool loading)
         {
             statisticsModel.CalculateStatistics(deleting, loading);
@@ -175,22 +288,72 @@ namespace StraightPoolScoreKeeper
             UpdateLineChart();
         }
 
+        /// <summary>
+        /// Updates the line charts based on the scores
+        /// </summary>
         private void UpdateLineChart()
         {
             if (statisticsModel.GetCurrentScores().Count == 0)
             {
-                chtAveragesScores.Series[SCORE_SERIES].Points.Clear();
-                chtAveragesScores.Series[AVERAGE_SERIES].Points.Clear();
+                chtAveragesScores.Series[Constants.SCORE_SERIES].Points.Clear();
+                chtAveragesScores.Series[Constants.AVERAGE_SERIES].Points.Clear();
                 return;
             }
 
             var scores = statisticsModel.GetCurrentScores().Select(s => s.Score).ToList();
             scores.Insert(0, 0);
-            chtAveragesScores.Series[SCORE_SERIES].Points.DataBindXY(Enumerable.Range(0, scores.Count).ToList(), scores);
+            chtAveragesScores.Series[Constants.SCORE_SERIES].Points.DataBindXY(Enumerable.Range(0, scores.Count).ToList(), scores);
             
             var averages = statisticsModel.GetCurrentAveragesList().ToList();
             averages.Insert(0, 0);
-            chtAveragesScores.Series[AVERAGE_SERIES].Points.DataBindXY(Enumerable.Range(0, averages.Count).ToList(), averages);
+            chtAveragesScores.Series[Constants.AVERAGE_SERIES].Points.DataBindXY(Enumerable.Range(0, averages.Count).ToList(), averages);
+        }
+
+        /// <summary>
+        /// Saves the settings of the UI
+        /// </summary>
+        private void SaveSettingsIni()
+        {
+            using (StreamWriter sw = new StreamWriter(Constants.SETTINGS_INI))
+            {
+                sw.WriteLine("TopMost={0}", this.TopMost);
+                sw.WriteLine("Width={0}", this.Width);
+                sw.WriteLine("Height={0}", this.Height);
+            }
+        }
+
+        /// <summary>
+        /// Loads the settings of the UI
+        /// </summary>
+        private void LoadSettingsIni()
+        {
+            using (StreamReader sr = new StreamReader(Constants.SETTINGS_INI))
+            {
+                while(sr.Peek() != -1)
+                {
+                    string line = sr.ReadLine();
+                    string[] pieces = line.Split('=');
+                    switch(pieces[0])
+                    {
+                        case Constants.TOP_MOST:
+                            this.TopMost = Convert.ToBoolean(pieces[1]);
+                            break;
+                        case Constants.WIDTH:
+                            this.Width = Convert.ToInt32(pieces[1]);
+                            break;
+                        case Constants.HEIGHT:
+                            this.Height = Convert.ToInt32(pieces[1]);
+                            break;
+                        default:
+                            using (new CenterWinDialog(this))
+                            {
+                                MessageBox.Show(this, String.Format(Constants.NOT_VALID_SETTING, line), Constants.ERROR,
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                            break;
+                    }
+                }
+            }
         }
     }
 }

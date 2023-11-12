@@ -4,17 +4,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace StraightPoolScoreKeeper
+namespace HighRunStraightPoolScoreKeeper
 {
     public class StatisticsModel
     {
-        // Constants
-        private const string CURRENT_SCORE_TXT = "CurrentScore.txt";
-        private const string CURRENT_BEST_TXT = "CurrentBest.txt";
-        private const string RECORD_TXT = "Record.txt";
-        private const string AVERAGE_TXT = "Average.txt";
-        private const string SCORES_TXT = "Scores.txt";
-
         // Fields
         private int currentScore;
         private int currentBest;
@@ -40,7 +33,7 @@ namespace StraightPoolScoreKeeper
         public StatisticsModel()
         {
             CreateFiles();
-            LoadField(ref record, RECORD_TXT);
+            LoadField(ref record, Constants.RECORD_TXT);
             SaveCurrentScore(0);
         }
 
@@ -98,6 +91,10 @@ namespace StraightPoolScoreKeeper
             return totalRacks;
         }
 
+        /// <summary>
+        /// Gets total possible racks
+        /// </summary>
+        /// <returns>Total possible racks</returns>
         public int GetTotalPossibleRacks()
         {
             return totalPossibleRacks;
@@ -139,6 +136,10 @@ namespace StraightPoolScoreKeeper
             return rackStatistics;
         }
 
+        /// <summary>
+        /// Returns the racks completed percentage
+        /// </summary>
+        /// <returns>Racks completed percentage</returns>
         public double GetRacksCompletedPercentage()
         {
             if (totalRacks == 0 && totalPossibleRacks == 0)
@@ -167,7 +168,7 @@ namespace StraightPoolScoreKeeper
         {
             currentScore = score;
 
-            SaveField(currentScore, CURRENT_SCORE_TXT);
+            SaveField(currentScore, Constants.CURRENT_SCORE_TXT);
             SaveCurrentBest(currentScore);
             SaveRecord(currentBest);
         }
@@ -238,7 +239,7 @@ namespace StraightPoolScoreKeeper
                 return;
 
             currentBest = score;
-            SaveField(currentBest, CURRENT_BEST_TXT);
+            SaveField(currentBest, Constants.CURRENT_BEST_TXT);
         }
 
         /// <summary>
@@ -250,7 +251,7 @@ namespace StraightPoolScoreKeeper
                 return;
 
             record = score;
-            SaveField(record, RECORD_TXT);
+            SaveField(record, Constants.RECORD_TXT);
         }
 
         /// <summary>
@@ -258,12 +259,12 @@ namespace StraightPoolScoreKeeper
         /// </summary>
         public void LoadScores()
         {
-            if (!File.Exists(SCORES_TXT))
+            if (!File.Exists(Constants.SCORES_TXT))
             {
                 return;
             }
 
-            IEnumerable<int> scores = File.ReadAllLines(SCORES_TXT).Select(s => Convert.ToInt32(s));
+            IEnumerable<int> scores = File.ReadAllLines(Constants.SCORES_TXT).Select(s => Convert.ToInt32(s));
             foreach (int score in scores)
             {
                 currentScores.Add(new ScoreModel
@@ -276,6 +277,9 @@ namespace StraightPoolScoreKeeper
             }
         }
 
+        /// <summary>
+        /// Clears the statistics model
+        /// </summary>
         public void Clear()
         {
             currentScores.Clear();
@@ -294,13 +298,13 @@ namespace StraightPoolScoreKeeper
             if (currentScores.Count == 0)
             {
                 average = 0;
-                SaveField(average, AVERAGE_TXT);
+                SaveField(average, Constants.AVERAGE_TXT);
                 return;
             }
 
             average = currentScores.Sum(sm => sm.Score) / currentScores.Count;
             averagesList.Add(average);
-            SaveField(average, AVERAGE_TXT);
+            SaveField(average, Constants.AVERAGE_TXT);
         }
 
         /// <summary>
@@ -350,7 +354,7 @@ namespace StraightPoolScoreKeeper
         /// </summary>
         private void SaveScores()
         {
-            File.WriteAllLines(SCORES_TXT, currentScores.Select(s => s.Score.ToString()));
+            File.WriteAllLines(Constants.SCORES_TXT, currentScores.Select(s => s.Score.ToString()));
         }
 
         /// <summary>
@@ -374,12 +378,16 @@ namespace StraightPoolScoreKeeper
         /// </summary>
         private void CreateFiles()
         {
-            CreateFile(AVERAGE_TXT);
-            CreateFile(CURRENT_BEST_TXT);
-            CreateFile(CURRENT_SCORE_TXT);
-            CreateFile(RECORD_TXT);
+            CreateFile(Constants.AVERAGE_TXT);
+            CreateFile(Constants.CURRENT_BEST_TXT);
+            CreateFile(Constants.CURRENT_SCORE_TXT);
+            CreateFile(Constants.RECORD_TXT);
         }
 
+        /// <summary>
+        /// Creates the file for the appropriate field
+        /// </summary>
+        /// <param name="file">File name</param>
         private void CreateFile(string file)
         {
             if (!File.Exists(file))
