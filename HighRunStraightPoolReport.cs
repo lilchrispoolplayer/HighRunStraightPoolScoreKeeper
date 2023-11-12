@@ -25,19 +25,24 @@ namespace HighRunStraightPoolScoreKeeper
         /// <param name="e"></param>
         private void HighRunStraightPoolReportShown(object sender, EventArgs e)
         {
-            using (StreamReader sr = new StreamReader(Constants.SAVED_SCORES_CSV))
+            if (File.Exists(Constants.SAVED_SCORES_CSV))
             {
-                while (sr.Peek() != -1)
+                using (StreamReader sr = new StreamReader(Constants.SAVED_SCORES_CSV))
                 {
-                    string line = sr.ReadLine();
-                    ReportModel reportModel = new ReportModel(line);
-                    reportsRow.Add(reportModel);
+                    while (sr.Peek() != -1)
+                    {
+                        string line = sr.ReadLine();
+                        ReportModel reportModel = new ReportModel(line);
+                        reportsRow.Add(reportModel);
+                    }
                 }
             }
 
             dgReportsGrid.DataSource = reportsRow;
             dgReportsGrid.ClearSelection();
-            dgReportsGrid.Rows[dgReportsGrid.Rows.Count - 1].Selected = true;
+
+            if (dgReportsGrid.Rows.Count > 0)
+                dgReportsGrid.Rows[dgReportsGrid.Rows.Count - 1].Selected = true;
         }
 
         /// <summary>
