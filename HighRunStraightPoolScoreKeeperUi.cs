@@ -1,14 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace HighRunStraightPoolScoreKeeper
 {
     public partial class FrmStraightPoolScoreKeeper : Form
     {
         private StatisticsModel statisticsModel = new StatisticsModel();
+        private Point? previousMousePosition = null;
+        private ToolTip tooltip = new ToolTip();
 
         /// <summary>
         /// Default Constructor
@@ -61,24 +65,42 @@ namespace HighRunStraightPoolScoreKeeper
         /// <param name="e"></param>
         private void SaveDailyReportToolStripMenuItemClick(object sender, EventArgs e)
         {
-            string currentLine = string.Format("{0}|{1}", DateTime.Now.ToShortDateString(), String.Join(",", statisticsModel.GetCurrentScores().Select(s => s.Score)));
-            string lastLine = File.ReadLines(Constants.SAVED_SCORES_CSV).Last();
+            if (!File.Exists(Constants.SAVED_SCORES_CSV))
+            {
+                File.Create(Constants.SAVED_SCORES_CSV).Close();
+            }
 
-            DialogResult dr = DialogResult.Yes;
-            if (lastLine.Substring(0, lastLine.IndexOf("|")) == currentLine.Substring(0, lastLine.IndexOf("|")))
+            if (statisticsModel.GetCurrentScores().Count == 0)
             {
                 using (new CenterWinDialog(this))
                 {
-                    dr = MessageBox.Show("You've already saved scores today.  Save Again?", "Question",
-                    MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                    MessageBox.Show("There are no scores to save for today!", "Information",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
+                return;
             }
 
+            DialogResult dr = DialogResult.Yes;
+            IEnumerable<string> savedScoreLines = File.ReadLines(Constants.SAVED_SCORES_CSV);
+            string currentScores = string.Format("{0}|{1}", DateTime.Now.ToShortDateString(), String.Join(",", statisticsModel.GetCurrentScores().Select(s => s.Score)));
+            if (savedScoreLines.Count() > 0)
+            {
+                string lastLine = savedScoreLines.Last();
+                if (lastLine.Substring(0, lastLine.IndexOf("|")) == currentScores.Substring(0, lastLine.IndexOf("|")))
+                {
+                    using (new CenterWinDialog(this))
+                    {
+                        dr = MessageBox.Show("You've already saved scores today.  Save Again?", "Question",
+                        MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                    }
+                }
+            }
+            
             if (dr == DialogResult.Yes)
             {
                 using (StreamWriter sw = new StreamWriter(Constants.SAVED_SCORES_CSV, true))
                 {
-                    sw.WriteLine(currentLine);
+                    sw.WriteLine(currentScores);
                 }
             }
         }
@@ -90,8 +112,11 @@ namespace HighRunStraightPoolScoreKeeper
         /// <param name="e"></param>
         private void ViewReportToolStripMenuItemClick(object sender, EventArgs e)
         {
-            HighRunStraightPoolReport report = new HighRunStraightPoolReport();
-            report.ShowDialog();
+            using (new CenterWinDialog(this))
+            {
+                HighRunStraightPoolReport report = new HighRunStraightPoolReport();
+                report.ShowDialog();
+            }
         }
 
         /// <summary>
@@ -159,6 +184,30 @@ namespace HighRunStraightPoolScoreKeeper
         }
 
         /// <summary>
+        /// Displays the moused over data point
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ChtAveragesScoresMouseMove(object sender, MouseEventArgs e)
+        {
+            var pos = e.Location;
+            if (previousMousePosition.HasValue && pos == previousMousePosition.Value)
+                return;
+            tooltip.RemoveAll();
+            previousMousePosition = pos;
+            var results = chtAveragesScores.HitTest(pos.X, pos.Y, false, ChartElementType.DataPoint); // set ChartElementType.PlottingArea for full area, not only DataPoints
+            DataPoint test = chtAveragesScores.Series[0].Points[0];
+            foreach (var result in results)
+            {
+                if (result.ChartElementType == ChartElementType.DataPoint) // set ChartElementType.PlottingArea for full area, not only DataPoints
+                {
+                    string toolTipMessage = string.Format("{0}: {1}", result.Series.Name, result.Series.Points[result.PointIndex].YValues[0]);
+                    tooltip.Show(toolTipMessage, chtAveragesScores, pos.X, pos.Y - 15);
+                }
+            }
+        }
+
+        /// <summary>
         /// Highlights the selected score row
         /// </summary>
         /// <param name="sender"></param>
@@ -215,7 +264,7 @@ namespace HighRunStraightPoolScoreKeeper
         private void ControlMouseEnter(object sender, EventArgs e)
         {
             Control currentControl = ((Control)sender);
-            Point p = ((Control)sender).PointToClient(Cursor.Position);
+            Point p = ((Control)sender).PointToClient(MousePosition);
             p.X += 30;
             p.Y -= 20;
             

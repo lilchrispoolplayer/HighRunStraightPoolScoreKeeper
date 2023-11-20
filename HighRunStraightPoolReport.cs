@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace HighRunStraightPoolScoreKeeper
 {
     public partial class HighRunStraightPoolReport : Form
     {
         private List<ReportModel> reportsRow = new List<ReportModel>();
+        private Point? previousMousePosition = null;
+        private ToolTip tooltip = new ToolTip();
 
         /// <summary>
         /// Default Constructor
@@ -78,6 +82,30 @@ namespace HighRunStraightPoolScoreKeeper
             averages.Insert(0, 0);
             chtAveragesScores.Series[Constants.SCORE_SERIES].Points.DataBindXY(Enumerable.Range(0, scores.Count).ToList(), scores);
             chtAveragesScores.Series[Constants.AVERAGE_SERIES].Points.DataBindXY(Enumerable.Range(0, averages.Count).ToList(), averages);
+        }
+
+        /// <summary>
+        /// Displays the moused over data point
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ChtAveragesScoresMouseMove(object sender, MouseEventArgs e)
+        {
+            var pos = e.Location;
+            if (previousMousePosition.HasValue && pos == previousMousePosition.Value)
+                return;
+            tooltip.RemoveAll();
+            previousMousePosition = pos;
+            var results = chtAveragesScores.HitTest(pos.X, pos.Y, false, ChartElementType.DataPoint); // set ChartElementType.PlottingArea for full area, not only DataPoints
+            DataPoint test = chtAveragesScores.Series[0].Points[0];
+            foreach (var result in results)
+            {
+                if (result.ChartElementType == ChartElementType.DataPoint) // set ChartElementType.PlottingArea for full area, not only DataPoints
+                {
+                    string toolTipMessage = string.Format("{0}: {1}", result.Series.Name, result.Series.Points[result.PointIndex].YValues[0]);
+                    tooltip.Show(toolTipMessage, chtAveragesScores, pos.X, pos.Y - 15);
+                }
+            }
         }
     }
 }

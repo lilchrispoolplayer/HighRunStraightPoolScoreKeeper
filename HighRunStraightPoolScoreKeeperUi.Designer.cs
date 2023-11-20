@@ -478,6 +478,7 @@
             title1.Name = "Title1";
             title1.Text = "Averages & Scores";
             this.chtAveragesScores.Titles.Add(title1);
+            this.chtAveragesScores.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ChtAveragesScoresMouseMove);
             // 
             // menuStrip1
             // 
@@ -501,14 +502,14 @@
             // saveDailyReportToolStripMenuItem
             // 
             this.saveDailyReportToolStripMenuItem.Name = "saveDailyReportToolStripMenuItem";
-            this.saveDailyReportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveDailyReportToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.saveDailyReportToolStripMenuItem.Text = "Save Daily Report";
             this.saveDailyReportToolStripMenuItem.Click += new System.EventHandler(this.SaveDailyReportToolStripMenuItemClick);
             // 
             // viewReportToolStripMenuItem
             // 
             this.viewReportToolStripMenuItem.Name = "viewReportToolStripMenuItem";
-            this.viewReportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.viewReportToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.viewReportToolStripMenuItem.Text = "View Report";
             this.viewReportToolStripMenuItem.Click += new System.EventHandler(this.ViewReportToolStripMenuItemClick);
             // 
