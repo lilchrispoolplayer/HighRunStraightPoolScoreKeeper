@@ -196,7 +196,6 @@ namespace HighRunStraightPoolScoreKeeper
             tooltip.RemoveAll();
             previousMousePosition = pos;
             var results = chtAveragesScores.HitTest(pos.X, pos.Y, false, ChartElementType.DataPoint); // set ChartElementType.PlottingArea for full area, not only DataPoints
-            DataPoint test = chtAveragesScores.Series[0].Points[0];
             foreach (var result in results)
             {
                 if (result.ChartElementType == ChartElementType.DataPoint) // set ChartElementType.PlottingArea for full area, not only DataPoints
