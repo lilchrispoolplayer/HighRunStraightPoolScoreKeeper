@@ -56,20 +56,25 @@ namespace HighRunStraightPoolScoreKeeper
         /// <param name="e"></param>
         private void DgReportsGridSelectionChanged(object sender, EventArgs e)
         {
+            chtAveragesScores.Series[Constants.HIGHLIGHT_SCORE_SESSION_SERIES].Points.Clear();
+            chtAveragesScores.Series[Constants.HIGHLIGHT_AVERAGE_SESSION_SERIES].Points.Clear();
             if (dgReportsGrid.SelectedRows.Count == 0)
             {
+                chtAveragesScores.Series[Constants.SCORE_LINE_SERIES].Points.Clear();
                 chtAveragesScores.Series[Constants.SCORE_SERIES].Points.Clear();
+                chtAveragesScores.Series[Constants.AVERAGE_LINE_SERIES].Points.Clear();
                 chtAveragesScores.Series[Constants.AVERAGE_SERIES].Points.Clear();
                 return;
             }
 
             List<int> scores = new List<int>();
             List<int> averages = new List<int>();
-            
+
             int j = 1;
-            for(int i = 0; i < dgReportsGrid.SelectedRows.Count; i++)
+            List<DataGridViewRow> selectedRows = dgReportsGrid.SelectedRows.Cast<DataGridViewRow>().OrderBy(sr => sr.Index).ToList();
+            for (int i = 0; i < selectedRows.Count; i++)
             {
-                scores.AddRange(dgReportsGrid.SelectedRows[i].Cells[1].Value.ToString().Split(',')
+                scores.AddRange(selectedRows[i].Cells[1].Value.ToString().Split(',')
                     .Select(s => Convert.ToInt32(s)));
 
                 while(j <= scores.Count)
@@ -80,8 +85,21 @@ namespace HighRunStraightPoolScoreKeeper
 
             scores.Insert(0, 0);
             averages.Insert(0, 0);
+            chtAveragesScores.Series[Constants.SCORE_LINE_SERIES].Points.DataBindXY(Enumerable.Range(0, scores.Count).ToList(), scores);
             chtAveragesScores.Series[Constants.SCORE_SERIES].Points.DataBindXY(Enumerable.Range(0, scores.Count).ToList(), scores);
+            chtAveragesScores.Series[Constants.AVERAGE_LINE_SERIES].Points.DataBindXY(Enumerable.Range(0, averages.Count).ToList(), averages);
             chtAveragesScores.Series[Constants.AVERAGE_SERIES].Points.DataBindXY(Enumerable.Range(0, averages.Count).ToList(), averages);
+
+            int x = 1;
+            for (int i = 0; i < selectedRows.Count; i++)
+            {
+                int scoreY = scores[x];
+                int averageY = averages[x];
+                chtAveragesScores.Series[Constants.HIGHLIGHT_SCORE_SESSION_SERIES].Points.AddXY(x, scoreY);
+                chtAveragesScores.Series[Constants.HIGHLIGHT_AVERAGE_SESSION_SERIES].Points.AddXY(x, averageY);
+
+                x += selectedRows[i].Cells[1].Value.ToString().Split(',').Length;
+            }
         }
 
         /// <summary>
@@ -94,13 +112,15 @@ namespace HighRunStraightPoolScoreKeeper
             var pos = e.Location;
             if (previousMousePosition.HasValue && pos == previousMousePosition.Value)
                 return;
+
             tooltip.RemoveAll();
             previousMousePosition = pos;
-            var results = chtAveragesScores.HitTest(pos.X, pos.Y, false, ChartElementType.DataPoint); // set ChartElementType.PlottingArea for full area, not only DataPoints
-            DataPoint test = chtAveragesScores.Series[0].Points[0];
+            var results = chtAveragesScores.HitTest(pos.X, pos.Y, false, ChartElementType.DataPoint); 
             foreach (var result in results)
             {
-                if (result.ChartElementType == ChartElementType.DataPoint) // set ChartElementType.PlottingArea for full area, not only DataPoints
+                if (result.ChartElementType == ChartElementType.DataPoint &&
+                    (result.Series == chtAveragesScores.Series[Constants.SCORE_SERIES] ||
+                     result.Series == chtAveragesScores.Series[Constants.AVERAGE_SERIES])) 
                 {
                     string toolTipMessage = string.Format("{0}: {1}", result.Series.Name, result.Series.Points[result.PointIndex].YValues[0]);
                     tooltip.Show(toolTipMessage, chtAveragesScores, pos.X, pos.Y - 15);

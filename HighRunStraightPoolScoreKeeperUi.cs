@@ -20,6 +20,11 @@ namespace HighRunStraightPoolScoreKeeper
         public FrmStraightPoolScoreKeeper()
         {
             InitializeComponent();
+
+            if (!File.Exists(Constants.SAVED_SCORES_CSV))
+            {
+                File.Create(Constants.SAVED_SCORES_CSV).Close();
+            }
         }
 
         /// <summary>
@@ -65,11 +70,6 @@ namespace HighRunStraightPoolScoreKeeper
         /// <param name="e"></param>
         private void SaveDailyReportToolStripMenuItemClick(object sender, EventArgs e)
         {
-            if (!File.Exists(Constants.SAVED_SCORES_CSV))
-            {
-                File.Create(Constants.SAVED_SCORES_CSV).Close();
-            }
-
             if (statisticsModel.GetCurrentScores().Count == 0)
             {
                 using (new CenterWinDialog(this))
@@ -91,7 +91,7 @@ namespace HighRunStraightPoolScoreKeeper
                     using (new CenterWinDialog(this))
                     {
                         dr = MessageBox.Show("You've already saved scores today.  Save Again?", "Question",
-                        MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                            MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                     }
                 }
             }
@@ -103,6 +103,15 @@ namespace HighRunStraightPoolScoreKeeper
                     sw.WriteLine(currentScores);
                 }
             }
+
+            using (new CenterWinDialog(this))
+            {
+                MessageBox.Show("Today's scores have been saved!  Clearing everything for the next session!", "Information", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            statisticsModel.Clear();
+            CalculateStatistics(true, false);
+            SaveCurrentScore(0);
         }
 
         /// <summary>
@@ -193,12 +202,15 @@ namespace HighRunStraightPoolScoreKeeper
             var pos = e.Location;
             if (previousMousePosition.HasValue && pos == previousMousePosition.Value)
                 return;
+
             tooltip.RemoveAll();
             previousMousePosition = pos;
             var results = chtAveragesScores.HitTest(pos.X, pos.Y, false, ChartElementType.DataPoint); // set ChartElementType.PlottingArea for full area, not only DataPoints
             foreach (var result in results)
             {
-                if (result.ChartElementType == ChartElementType.DataPoint) // set ChartElementType.PlottingArea for full area, not only DataPoints
+                if (result.ChartElementType == ChartElementType.DataPoint &&
+                    (result.Series == chtAveragesScores.Series[Constants.SCORE_SERIES] ||
+                     result.Series == chtAveragesScores.Series[Constants.AVERAGE_SERIES]))
                 {
                     string toolTipMessage = string.Format("{0}: {1}", result.Series.Name, result.Series.Points[result.PointIndex].YValues[0]);
                     tooltip.Show(toolTipMessage, chtAveragesScores, pos.X, pos.Y - 15);
@@ -343,17 +355,21 @@ namespace HighRunStraightPoolScoreKeeper
         {
             if (statisticsModel.GetCurrentScores().Count == 0)
             {
+                chtAveragesScores.Series[Constants.SCORE_LINE_SERIES].Points.Clear();
                 chtAveragesScores.Series[Constants.SCORE_SERIES].Points.Clear();
+                chtAveragesScores.Series[Constants.AVERAGE_LINE_SERIES].Points.Clear();
                 chtAveragesScores.Series[Constants.AVERAGE_SERIES].Points.Clear();
                 return;
             }
 
             var scores = statisticsModel.GetCurrentScores().Select(s => s.Score).ToList();
             scores.Insert(0, 0);
+            chtAveragesScores.Series[Constants.SCORE_LINE_SERIES].Points.DataBindXY(Enumerable.Range(0, scores.Count).ToList(), scores);
             chtAveragesScores.Series[Constants.SCORE_SERIES].Points.DataBindXY(Enumerable.Range(0, scores.Count).ToList(), scores);
-            
+
             var averages = statisticsModel.GetCurrentAveragesList().ToList();
             averages.Insert(0, 0);
+            chtAveragesScores.Series[Constants.AVERAGE_LINE_SERIES].Points.DataBindXY(Enumerable.Range(0, averages.Count).ToList(), averages);
             chtAveragesScores.Series[Constants.AVERAGE_SERIES].Points.DataBindXY(Enumerable.Range(0, averages.Count).ToList(), averages);
         }
 
