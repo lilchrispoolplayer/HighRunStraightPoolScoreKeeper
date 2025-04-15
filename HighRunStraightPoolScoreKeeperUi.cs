@@ -180,6 +180,18 @@ namespace HighRunStraightPoolScoreKeeper
         }
 
         /// <summary>
+        /// Adds 14 to the current score
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnPlus14_Click(object sender, EventArgs e)
+        {
+            int currentScore = Convert.ToInt32(txtCurrentScore.Text);
+            currentScore += 14;
+            txtCurrentScore.Text = currentScore.ToString();
+        }
+
+        /// <summary>
         /// Ends the current inning by saving the score and calculating statistics
         /// </summary>
         /// <param name="sender"></param>

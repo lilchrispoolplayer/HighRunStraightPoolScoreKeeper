@@ -69,6 +69,7 @@
             this.reportsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveDailyReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnPlus14 = new System.Windows.Forms.Button();
             this.gbxCurrentScore.SuspendLayout();
             this.gbxCurrentBest.SuspendLayout();
             this.gbxStatistics.SuspendLayout();
@@ -82,6 +83,7 @@
             // 
             // gbxCurrentScore
             // 
+            this.gbxCurrentScore.Controls.Add(this.btnPlus14);
             this.gbxCurrentScore.Controls.Add(this.txtCurrentScore);
             this.gbxCurrentScore.Controls.Add(this.btnEndInning);
             this.gbxCurrentScore.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -98,7 +100,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCurrentScore.Location = new System.Drawing.Point(6, 19);
             this.txtCurrentScore.Name = "txtCurrentScore";
-            this.txtCurrentScore.Size = new System.Drawing.Size(123, 26);
+            this.txtCurrentScore.Size = new System.Drawing.Size(64, 26);
             this.txtCurrentScore.TabIndex = 0;
             this.txtCurrentScore.Text = "0";
             this.toolTip1.SetToolTip(this.txtCurrentScore, "Enter your score at the end of each rack or when you miss.\r\nPressing the ENTER ke" +
@@ -535,6 +537,16 @@
             this.viewReportToolStripMenuItem.Text = "View Report";
             this.viewReportToolStripMenuItem.Click += new System.EventHandler(this.ViewReportToolStripMenuItemClick);
             // 
+            // btnPlus14
+            // 
+            this.btnPlus14.Location = new System.Drawing.Point(76, 19);
+            this.btnPlus14.Name = "btnPlus14";
+            this.btnPlus14.Size = new System.Drawing.Size(53, 26);
+            this.btnPlus14.TabIndex = 5;
+            this.btnPlus14.Text = "+14";
+            this.btnPlus14.UseVisualStyleBackColor = true;
+            this.btnPlus14.Click += new System.EventHandler(this.BtnPlus14_Click);
+            // 
             // FrmStraightPoolScoreKeeper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -610,6 +622,7 @@
         private System.Windows.Forms.ToolStripMenuItem reportsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveDailyReportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewReportToolStripMenuItem;
+        private System.Windows.Forms.Button btnPlus14;
     }
 }
 
