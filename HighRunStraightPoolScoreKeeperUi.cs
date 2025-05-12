@@ -189,6 +189,9 @@ namespace HighRunStraightPoolScoreKeeper
             int currentScore = Convert.ToInt32(txtCurrentScore.Text);
             currentScore += 14;
             txtCurrentScore.Text = currentScore.ToString();
+
+            SaveCurrentScore(Convert.ToInt32(txtCurrentScore.Text));
+            txtCurrentScore.SelectAll();
         }
 
         /// <summary>
